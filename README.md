@@ -8,6 +8,8 @@ This repo will contain both code and documentation for my Impact McImpactface pr
 ### Original Specification
 In the UK academics submit 'impact case studies' as part of the Research Excellence Framework (REF) assessment of research quality across universities. These case studies were made available openly. Some analysis has been conducted on these, but further opportunities should be available. It may be possible to work with the Research and Innovation Office at UTS to explore the datasets we hold, including text data (from impact statements, funding applications and reports, publications, etc.) and other data such as collaboration networks. Outcomes might help researchers understand their reach, or flag ways that researchers could increase their impact, or foster new successful collaborations. 
 
+The course outline for this subject can be accessed [here](https://ca.uts.edu.au/wp-content/uploads/2016/02/2016_Spring_36102_update.pdf).
+
 ### Additional Notes
 The Connected Intelligence Centre (CIC) has an existing body of work aiming to use Natural Language Processing tools to parse written works and make suggestions about how to improve those works. One potential outcome for this project could be a similar system to assist researchers writing research grants, impact case studies, etc.
 
