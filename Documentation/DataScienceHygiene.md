@@ -10,9 +10,20 @@ This document will cover my efforts to identify, create and record best practice
 * etc
 
 ## Contents
-[Inspiration and Research](#inspo)
+* [Inspiration and Research](#inspiration)
+* [Raw Elements](#elements)
+  * [Source Control](#sourcecontrol)
+  * [Manually Seed Random Number Generators](#seed)
+  * [Write Self-Contained Scripts](#scripts)
+  * [Record Software Versions](#versions)
+  * [Leave Raw Data Alone](#rawdata)
+  * [Save Your Models](#savemodels)
+  * [Minimise, Document and Review Assumptions](#assumptions)
+  * [Remain Skeptical](#skeptical)
+  * [Centralise Documentation and Project Management](#centralise)
 
-## Inspiration and Research <a name="inspo"></a>
+<a name="inspiration"></a>
+## Inspiration and Research 
 
 This body of work was inspired partly by [this blog post](https://blog.dominodatalab.com/joel-test-data-science/?imm_mid=0e6f40&cmp=em-data-na-na-newsltr_20160824) where the author proposes a "highly irresponsible sloppy test to rate the quality of a data science team". The test consists of eight questions:
 
@@ -36,8 +47,66 @@ I then went back and took a look at the blog post from 2000 which inspired the a
 * Do you have a bug database?
 * Do you have an up-to-date schedule?
 
+I admire the simplicity of these tests, which is something I hope to replicate in my own Data Science Hygiene guide.
+
 I also did some highly targeted "Google researching" and found that [no one is really talking about data science hygiene](http://lmgtfy.com/?q=data+science+hygiene). I found a few posts related to code hygiene - whilst similar, data science is far more broad than coding. It looks like I'll be cutting a path all by myself!
 
+<a name="elements"></a>
+## Raw Elements
 
+I'm going to use this section to record some elements that I think are important, and some supporting details. These raw elements will be refined later, and are presented in no particular order
 
+<a name="sourcecontrol"></a>
+### Source Control
+Source control incorporates a number of good hygiene practices:
 
+* Version management
+* Collaborative editing
+* Code review
+* Backup
+* Reproducibility
+
+This ticks off part of the **Joel Test for DS** point around being able to reproduce experiments and results by providing the original code.
+
+<a name="seed"></a>
+### Manually Seed Random Number Generators
+Lots of different processes in data science projects use random number generators, which makes reproducibility challenging. For this reason it makes sense to manually seed these generators so that the same results can be obtained in future.
+
+<a name="scripts"></a>
+### Write Self-Contained Scripts
+If your data science process requires a 15-step process to get it to run, then you have 15 chances for an error to slip into the process somewhere. Most data science languages are also scripting languages, so this isn't a particularly onerous requirement - it just takes a bit of effort to make sure that your script runs by itself. This helps to ensure that you get the same result every time you run your script, and allows your code to be more easily reviewed.
+
+<a name="versions"></a>
+### Record Software Versions
+Working with new tools can bring some logistical challenges. As version numbers change:
+
+* Bugs can introduced or fixed
+* Functionality can be changed, added or removed
+* Syntax can change
+* etc
+
+Whilst **_best practice_** would include using infrastructure-as-code tools like Docker to record and build the environment from scratch every time it is required (and use code control to manage the Dockerfile), it should suffice to record the versions for each tool used.
+
+<a name="rawdata"></a>
+### Leave Raw Data Alone
+Don't edit raw data (and don't delete source data)
+Keep versions if required
+
+<a name="savemodels"></a>
+### Save Your Models
+If you are going to publish anything about a model then you should save the model somewhere for future reference.
+The same thing goes for parameters, whether they are selected manually or discovered through a parameter sweep.
+
+<a name="assumptions"></a>
+### Minimise, Document and Review Assumptions
+You should mininimise the number of assumptions you make, and let the data do the talking. When you have to make an assumption, be clear what the assumption is and why you are making it, and then document it. 
+
+Revisit assumptions regularly to ensure that they remain plausible.
+
+<a name="skepticism"></a>
+### Remain Skeptical
+You should maintain a healthy level of skepticism. Results that seem too good to be true usually are, and correlations that seem causal probably aren't.
+
+<a name="centralise"></a>
+### Centralise Documentation and Project Management
+There is a trade-off between "working in the most convenient tool" and "working in the same tool", but the benefits of a single source of truth for issues, task management, findings, plans, documentation, decisions, etc are significant enough to be worth it.
