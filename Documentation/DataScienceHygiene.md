@@ -2,17 +2,19 @@
 
 This iLab project existed before I came along, and it will likely exist after I submit my work for assessment at the end of the semester. Whilst I'm not part of a team *now*, I will eventually be part of a virtual team, and my future team members are relying on me to kick things off in a responsible fashion. This means I need to be careful about how I document my research, write my code, present my work, track my progress, and generally manage the project. 
 
-This document will cover my efforts to identify, create and record best practice data science hygiene practices. I will refrain from defining data science hygiene at this point, except to note that it is different to "data hygiene", which is more about data cleaning. The hygiene analogy should do most of the heavy lifting in terms of a definition:
+This document will cover my efforts to identify, create and record best practice data science hygiene practices. I will refrain from defining exactly what I mean by data science hygiene at this point, except to note that it is different to "data hygiene", which is more about data cleaning. The hygiene analogy should do most of the heavy lifting in terms of a definition:
 * Good (data science) hygiene prevents the spread of disease (bugs)
 * Bad (data science) hygiene often leads to things smelling off (results)
 * Good hygiene comes from forming good habits early
 * Bad hygiene gets a lot more attention than good hygiene
 * etc
 
+This document will be a living document, with version tracking provided through Git.
+
 ## Contents
 * [Inspiration and Research](#inspiration)
 * [Raw Elements](#elements)
-  * [Source Control](#sourcecontrol)
+  * [Use Source Control](#sourcecontrol)
   * [Manually Seed Random Number Generators](#seed)
   * [Write Self-Contained Scripts](#scripts)
   * [Record Software Versions](#versions)
@@ -20,8 +22,11 @@ This document will cover my efforts to identify, create and record best practice
   * [Save Your Models](#savemodels)
   * [Minimise, Document and Review Assumptions](#assumptions)
   * [Remain Skeptical](#skeptical)
-  * [Centralise Documentation and Project Management](#centralise)
   * [Think About Production](#production)
+* [Key Elements](#keyelements)
+  * [Best Bits](#bestbits)
+  * [Tech Bits](#techbits)
+  * [Tough Bits](#toughbits)
 
 <a name="inspiration"></a>
 ## Inspiration and Research 
@@ -55,10 +60,10 @@ I also did some highly targeted "Google researching" and found that [no one is r
 <a name="elements"></a>
 ## Raw Elements
 
-I'm going to use this section to record some elements that I think are important, and some supporting details. These raw elements will be refined later, and are presented in no particular order
+I'm going to use this section to record some elements that I think are important, and some supporting details. These raw elements will be refined later, and are presented in no particular order.
 
 <a name="sourcecontrol"></a>
-### Source Control
+### Use Source Control
 Source control incorporates a number of good hygiene practices:
 
 * Version management
@@ -94,7 +99,6 @@ This one is fairly self-explanatory. You can look at the raw data, but you canno
 * For data normally stored in a database, your script should extract it from the source database if possible, rather than keeping a cached copy. If you have to keep cached data, make sure you keep old versions of this cache so that you can replicate your experiments in future.
 * For data that is delivered in files, use this data where possible rather than relying on someone else's ETL process (unless you are confident in the process)
 
-
 <a name="savemodels"></a>
 ### Save Your Models
 It is important to save models (and their associated parameters) to file any time you're publishing information about those models, such as:
@@ -107,7 +111,6 @@ Model parameters should also be recorded, whether they are selected manually or 
 
 Most tools which can build models have some way of saving the model to file. This could be through a standard like PMML (Predictive Model Markup Language), explicitly coding the model weights and parameters, or simply saving model objects to a file as binary data. 
 
-
 <a name="assumptions"></a>
 ### Minimise, Document and Review Assumptions
 You should mininimise the number of assumptions you make, and let the data do the talking. When you have to make an assumption, be clear what the assumption is and why you are making it, and then document it. 
@@ -116,12 +119,42 @@ Revisit assumptions regularly to ensure that they remain plausible.
 
 <a name="skepticism"></a>
 ### Remain Skeptical
-You should maintain a healthy level of skepticism. Results that seem too good to be true usually are, and correlations that seem causal probably aren't.
-
-<a name="centralise"></a>
-### Centralise Documentation and Project Management
-There is a trade-off between "working in the most convenient tool" and "working in the same tool", but the benefits of a single source of truth for issues, task management, findings, plans, documentation, decisions, etc are significant enough to be worth it.
+You should maintain a healthy level of skepticism. Results that seem too good to be true usually are, and correlations that seem causal probably aren't. If you are going to make a claim based on your analysis of a dataset, make sure that you have considered statistical significance, and be careful about implying causality.
 
 <a name="production"></a>
 ### Think About Production
-There 
+It is important to consider production at every stage throughout the project. If you are building a predictive model, this carefully considering what data you will have access to, when you will get access to it, and how your predictions will be used. If you are building a system that makes predictions five minutes ahead, but you only get a daily data extract, then it is best to identify this early. Knowing about the production environment also helps to make decisions around tool selection, model optimisation, etc.
+
+<a name="keyelements"></a>
+## Key Elements
+
+In this section the Raw Elements detailed above will be whittled down into a short list, which will be my final "Data Science Hygiene" checklist. With only 9 elements above it seems like I can probably keep them all in the list if necessary - there is no requirement to drop elements at this stage.
+
+<a name="bestbits"></a>
+### Best Bits
+I think that a reasonable definition for "best" includes the following considerations:
+* Easy and achievable for data scientists at all levels of experience
+* High impact
+* Tool and process agnostic
+* As general as possible
+As a concrete example, the same checklist items will need to apply to someone who is just starting out with machine learning, or someone with a whole career of experience in data visualisation.
+
+With these points in mind, I think there are some clear candidates for "best bits":
+* Use Source Control
+* Leave Raw Data Alone
+* Remain Skeptical
+
+<a name="techbits"></a>
+### Tech Bits
+There are some technical elements mentioned above which are a little bit more specific, but they're still really important habits to form. They can still be included in my checklist, but I'll need to be careful about wording, and maybe even consider broadening them a little.
+* Manually Seed Random Number Generators
+* Write Self-Contained Scripts
+* Record Software Versions
+* Save Your Models
+
+<a name="toughbits"></a>
+### Tough Bits
+These elements require a bit more experience to pull off effectively. They are still great habits, but they might not be general enough for this checklist. These are prime candidates for removal.
+* Think About Production
+* Minimise, Document and Review Assumptions
+
