@@ -1,6 +1,6 @@
 # Data Science Hygiene
 
-This project existed before I came along, and it will likely exist after I submit my work for assessment at the end of the semester. Whilst I'm not part of a team *now*, I will eventually be part of a virtual team, and my future team members are relying on me to kick things off in a responsible fashion. This means I need to be careful about how I document my research, write my code, present my work, track my progress, and generally manage the project. 
+This iLab project existed before I came along, and it will likely exist after I submit my work for assessment at the end of the semester. Whilst I'm not part of a team *now*, I will eventually be part of a virtual team, and my future team members are relying on me to kick things off in a responsible fashion. This means I need to be careful about how I document my research, write my code, present my work, track my progress, and generally manage the project. 
 
 This document will cover my efforts to identify, create and record best practice data science hygiene practices. I will refrain from defining data science hygiene at this point, except to note that it is different to "data hygiene", which is more about data cleaning. The hygiene analogy should do most of the heavy lifting in terms of a definition:
 * Good (data science) hygiene prevents the spread of disease (bugs)
@@ -21,6 +21,7 @@ This document will cover my efforts to identify, create and record best practice
   * [Minimise, Document and Review Assumptions](#assumptions)
   * [Remain Skeptical](#skeptical)
   * [Centralise Documentation and Project Management](#centralise)
+  * [Think About Production](#production)
 
 <a name="inspiration"></a>
 ## Inspiration and Research 
@@ -89,13 +90,23 @@ Whilst **_best practice_** would include using infrastructure-as-code tools like
 
 <a name="rawdata"></a>
 ### Leave Raw Data Alone
-Don't edit raw data (and don't delete source data)
-Keep versions if required
+This one is fairly self-explanatory. You can look at the raw data, but you cannot modify it! You should also keep it as close to it's raw location as possible. For example:
+* For data normally stored in a database, your script should extract it from the source database if possible, rather than keeping a cached copy. If you have to keep cached data, make sure you keep old versions of this cache so that you can replicate your experiments in future.
+* For data that is delivered in files, use this data where possible rather than relying on someone else's ETL process (unless you are confident in the process)
+
 
 <a name="savemodels"></a>
 ### Save Your Models
-If you are going to publish anything about a model then you should save the model somewhere for future reference.
-The same thing goes for parameters, whether they are selected manually or discovered through a parameter sweep.
+It is important to save models (and their associated parameters) to file any time you're publishing information about those models, such as:
+* Claims about accuracy
+* Claims about variable importance
+* Model scores and/or predictions
+* Structure uncovered in the dataset
+
+Model parameters should also be recorded, whether they are selected manually or discovered through a parameter sweep.
+
+Most tools which can build models have some way of saving the model to file. This could be through a standard like PMML (Predictive Model Markup Language), explicitly coding the model weights and parameters, or simply saving model objects to a file as binary data. 
+
 
 <a name="assumptions"></a>
 ### Minimise, Document and Review Assumptions
@@ -110,3 +121,7 @@ You should maintain a healthy level of skepticism. Results that seem too good to
 <a name="centralise"></a>
 ### Centralise Documentation and Project Management
 There is a trade-off between "working in the most convenient tool" and "working in the same tool", but the benefits of a single source of truth for issues, task management, findings, plans, documentation, decisions, etc are significant enough to be worth it.
+
+<a name="production"></a>
+### Think About Production
+There 
