@@ -169,5 +169,5 @@ These elements require a bit more experience to pull off effectively. They are s
 * Minimise, Document and Review Assumptions
 
 ## Next Steps
-These key elements will be formed into a blog post which will be prepared [here](./Documentation/BlogPost.md) and published here.
+These key elements will be formed into a blog post which will be prepared [here](./Documentation/DataScienceHygiene.md) and published here.
 
