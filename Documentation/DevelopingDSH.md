@@ -1,4 +1,4 @@
-# Data Science Hygiene
+# Developing Data Science Hygiene
 
 This iLab project existed before I came along, and it will likely exist after I submit my work for assessment at the end of the semester. Whilst I'm not part of a team *now*, I will eventually be part of a virtual team, and my future team members are relying on me to kick things off in a responsible fashion. This means I need to be careful about how I document my research, write my code, present my work, track my progress, and generally manage the project. 
 
