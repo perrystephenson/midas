@@ -3,6 +3,7 @@
 This iLab project existed before I came along, and it will likely exist after I submit my work for assessment at the end of the semester. Whilst I'm not part of a team *now*, I will eventually be part of a virtual team, and my future team members are relying on me to kick things off in a responsible fashion. This means I need to be careful about how I document my research, write my code, present my work, track my progress, and generally manage the project. 
 
 This document will cover my efforts to identify, create and record best practice data science hygiene practices. I will refrain from defining exactly what I mean by data science hygiene at this point, except to note that it is different to "data hygiene", which is more about data cleaning. The hygiene analogy should do most of the heavy lifting in terms of a definition:
+
 * Good (data science) hygiene prevents the spread of disease (bugs)
 * Bad (data science) hygiene often leads to things smelling off (results)
 * Good hygiene comes from forming good habits early
@@ -43,11 +44,13 @@ This body of work was inspired partly by [this blog post](https://blog.dominodat
 8. Do your data scientists use the best tools money can buy?
 
 Obviously most of these will not be relevant to my project, however there are a few that stood out for me as examples of "best practice":
+
 * Can data scientists find and reproduce past experiments and results, using the original code, data, parameters, and software versions?
 * Does collaboration happen through a system other than email?
 * Is there a single place to search for past research and reusable data sets, code, etc?
 
 I then went back and took a look at the blog post from 2000 which inspired the above test, which was the original [Joel Test](http://joelonsoftware.com/articles/fog0000000043.html) - a "highly irresponsible, sloppy test to rate the quality of a software team". This test has 12 questions so I won't include them all here, but I will call out the ones I think are important for Data Science Hygiene:
+
 * Do you use source control?
 * Can you make a build in one step?
 * Do you have a bug database?
@@ -96,12 +99,14 @@ Whilst **_best practice_** would include using infrastructure-as-code tools like
 <a name="rawdata"></a>
 ### Leave Raw Data Alone
 This one is fairly self-explanatory. You can look at the raw data, but you cannot modify it! You should also keep it as close to it's raw location as possible. For example:
-* For data normally stored in a database, your script should extract it from the source database if possible, rather than keeping a cached copy. If you have to keep cached data, make sure you keep old versions of this cache so that you can replicate your experiments in future.
-* For data that is delivered in files, use this data where possible rather than relying on someone else's ETL process (unless you are confident in the process)
+
+* For data normally stored in a database, your script should extract it from the source database if possible, rather than keeping a cached copy. If you have to keep cached data, make sure you cache it as soon as it is extracted.
+* For data that is delivered in files, use this data where possible rather than relying on someone else's ETL process (unless you are really confident in the process).
 
 <a name="savemodels"></a>
 ### Save Your Models
 It is important to save models (and their associated parameters) to file any time you're publishing information about those models, such as:
+
 * Claims about accuracy
 * Claims about variable importance
 * Model scores and/or predictions
@@ -133,20 +138,24 @@ In this section the Raw Elements detailed above will be whittled down into a sho
 <a name="bestbits"></a>
 ### Best Bits
 I think that a reasonable definition for "best" includes the following considerations:
+
 * Easy and achievable for data scientists at all levels of experience
 * High impact
 * Tool and process agnostic
 * As general as possible
+
 As a concrete example, the same checklist items will need to apply to someone who is just starting out with machine learning, or someone with a whole career of experience in data visualisation.
 
 With these points in mind, I think there are some clear candidates for "best bits":
+
 * Use Source Control
 * Leave Raw Data Alone
 * Remain Skeptical
 
 <a name="techbits"></a>
 ### Tech Bits
-There are some technical elements mentioned above which are a little bit more specific, but they're still really important habits to form. They can still be included in my checklist, but I'll need to be careful about wording, and maybe even consider broadening them a little.
+There are some technical elements which are a little bit more specific, but they're still really important habits to form. They can still be included in my checklist, but I'll need to be careful about wording, and maybe even consider broadening them a little.
+
 * Manually Seed Random Number Generators
 * Write Self-Contained Scripts
 * Record Software Versions
@@ -155,6 +164,10 @@ There are some technical elements mentioned above which are a little bit more sp
 <a name="toughbits"></a>
 ### Tough Bits
 These elements require a bit more experience to pull off effectively. They are still great habits, but they might not be general enough for this checklist. These are prime candidates for removal.
+
 * Think About Production
 * Minimise, Document and Review Assumptions
+
+## Next Steps
+These key elements will be formed into a blog post which will be prepared [here](./Documentation/BlogPost.md) and published here.
 
