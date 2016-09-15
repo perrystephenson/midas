@@ -15,7 +15,7 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 
 ## Documentation
 
-[Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distill the concept of "good practice" for a rapidly developing field into a single list.
+[Developing Data Science Hygiene](./Documentation/DevelopingDSH.md) - an attempt to distill the concept of "good practice" for a rapidly developing field into a single list.
 
 ## Reference
 [API for accessing the Impact Case Studies dataset](http://impact.ref.ac.uk/CaseStudies/APIhelp.aspx)
