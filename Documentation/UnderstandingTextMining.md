@@ -7,6 +7,10 @@ Text Mining is a huge field. Knowing where to start on a text-based data science
 * Several paragraphs of text
 * Text is highly edited and reviewed, and likely to be fairly consistent
 
+### Attribution
+
+Most of the material in this document is adapted from notes that I took whilst studying the [Coursera Text Mining](https://www.coursera.org/learn/text-mining) course from the University of Illinois at Urbana-Champaign. 
+
 ## Related Things
 
 Two things often mentioned in the same breath as text mining are **Natural Language Processing** and **text retrieval**. It is worth considering the relationship between these things and **text mining**, and how they might be useful in the context of the iLab project.
@@ -52,4 +56,31 @@ This paradigm provides a nice breakdown for how different techniques apply to di
 5. Predictions about the real world (text-based prediction)
 
 The rest of this document will be structured around these 5 areas.
+
+## Natural Language Content Analysis
+
+How can we represent text data? Which techniques can be used to analyse it?
+
+#### Natural Language Processing
+
+* Lexical analysis (part-of-speech tagging)
+* Syntactic analysis (parsing)
+* Semantic analysis - requires a mapping from the syntactic tree to the real world in order to infer meaning
+* Inference
+* Pragmatic Analysis (speech act - purpose)
+
+Natural language is designed to make human communications efficient. As a result:
+
+* we omit a lot of common sense knowledge which we assume the receipient possesses
+* we keep a lot of ambiguities, which we assume the recipient knows how to resolve
+
+This makes NLP very hard! State of the art NLP techniques are now getting >97% accuracy for POS tagging, reasonable accuracy for parsing, but that's about it. Some aspects of semantic analysis are possible (entity relation/extraction, word sense disambiguation, sentiment analysis) but that's about it. Except within very specific domains, inference and speech act analysis are not currently possible.
+
+The key take-away from this is that the following things cannot be done:
+
+* 100% accurate part-of-speech tagging
+* General, complete parsing
+* Precise deep semantic analysis
+
+Robust and general use of NLP tends to be **shallow** whilst **deep** understanding does not scale up. Shallow NLP is the foundation for modern text mining approaches.
 
