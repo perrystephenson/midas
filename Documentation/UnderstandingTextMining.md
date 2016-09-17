@@ -7,16 +7,30 @@ Text Mining is a huge field. Knowing where to start on a text-based data science
 * Several paragraphs of text
 * Text is highly edited and reviewed, and likely to be fairly consistent
 
-## NLP and Text Mining
+## Related Things
 
-Natural Language Processing (NLP) and Text Mining are often used interchangeably. Broadly, Text Mining (and Text Retrieval) are associated with large bodies of text, and utilise techniques which scale well to large datasets. NLP techniques on the other hand are associated with deeper analysis of the text, and involves a lot more human interaction. NLP techniques tend not to scale, where Text Mining techniques are all about scale. 
+Two things often mentioned in the same breath as text mining are **NLP** and **text retrieval**. It is worth considering the relationship between these things and **text mining**, and how they might be useful in the context of the iLab project.
+
+### Natural Language Processing
+
+Natural Language Processing (NLP) and text mining are often used interchangeably, but this isn't quite accurate. Broadly, text mining (and text retrieval) are associated with large bodies of text, and utilise techniques which scale well to large datasets. NLP techniques on the other hand are associated with deeper analysis of the text, and involves a lot more human interaction. NLP techniques tend not to scale, where Text Mining techniques are all about scale. 
 
 - [ ] Need to do further work to understand the difference.
 
-## Text Retrieval and Text Mining
+### Text Retrieval 
 
-These seem to be two different things. The [Coursera Text Mining](https://www.coursera.org/learn/text-mining) course indicated that "Text Retrieval" is used to search through a "big data" dataset and find a workable set of "relevant" data. Text Mining is then used to find useful knowledge from this corpus of relevant data.
+Text retrieval and text mining seem to be two different things. The [Coursera Text Mining course](https://www.coursera.org/learn/text-mining) (from the University of Illinois at Urbana-Champaign) indicated that "text retrieval" is used to search through a "big data" dataset and find a workable set of "relevant" data. Text mining is then used to find useful knowledge from this corpus of relevant data.
+
+The course defined Text Mining as the process of turning text data into **high-quality information** or **actionable knowledge**. It should:
+
+* minimise human effort (minimise consumption effort)
+* supplies knowledge for optimal decision-making
+
+The course also specifies that **text retrieval** is an essential component of any text mining system. It can be a pre-processor for text mining, and it is needed for knowledge provenance.
 
 Given the dataset is only 6,000 records, it seems that text retrieval techniques are overkill for this iLab project. For the sake of completion it still makes sense to understand the techniques available in text retrieval and the associated use-cases.
 
 - [ ] Need to look into Text Retrieval techniques
+
+## Text Mining
+
