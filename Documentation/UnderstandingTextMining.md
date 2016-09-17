@@ -11,7 +11,7 @@ Text Mining is a huge field. Knowing where to start on a text-based data science
 
 Natural Language Processing (NLP) and Text Mining are often used interchangeably. Broadly, Text Mining (and Text Retrieval) are associated with large bodies of text, and utilise techniques which scale well to large datasets. NLP techniques on the other hand are associated with deeper analysis of the text, and involves a lot more human interaction. NLP techniques tend not to scale, where Text Mining techniques are all about scale. 
 
-[ ] Need to do further work to understand the difference.
+- [ ] Need to do further work to understand the difference.
 
 ## Text Retrieval and Text Mining
 
@@ -19,4 +19,4 @@ These seem to be two different things. The [Coursera Text Mining](https://www.co
 
 Given the dataset is only 6,000 records, it seems that text retrieval techniques are overkill for this iLab project. For the sake of completion it still makes sense to understand the techniques available in text retrieval and the associated use-cases.
 
-[ ] Need to look into Text Retrieval techniques
+- [ ] Need to look into Text Retrieval techniques
