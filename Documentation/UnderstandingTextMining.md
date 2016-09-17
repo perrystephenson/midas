@@ -37,13 +37,13 @@ These are arranged in order of difficulty - using the text alone it is hard to m
 
 This paradigm provides a nice breakdown for how different techniques apply to different objectives:
 
-1. Understanding the individual texts (NLP and text representation)
-2. Making generalisations about the language (word association)
+1. Understanding the individual texts ([NLP](#natural-language-processing) and [text representation](#text-representation))
+2. Making generalisations about the language ([word association](#word-association))
 3. Understanding the observer's perception of the world (topic mining)
 4. Inferences about the observer (Opinion mining and sentiment analysis)
 5. Predictions about the real world (text-based prediction)
 
-The rest of this document will be structured around these 5 areas.
+The rest of this document will be structured around these 5 areas - you can click the links above to jump straight to any of the sections below.
 
 ## Natural Language Processing
 
@@ -100,4 +100,22 @@ The [Coursera Text Mining](https://www.coursera.org/learn/text-mining) course pr
 
 In terms of how this interacts with my iLab project, these new learnings are guiding me very strongly towards techniques using the "sequence of words" representation of text. These techniques are very powerful and generalise well (in English at least, where word boundaries are easily detected). There is obviously increased value available by moving up the text representation complexity chain, however I cannot see a lot of value in learning complex techniques which do not generalise well unless I have already mastered the techniques at the more general level.  
 
-Whilst CIC have access to tools like the Xerox Incremental Parser (used as the basis for the Academic Writing Analysis tool) and these tools are showing promise in specific areas of research, I cannot envision a scenario where I would be able to learn and use these tools to provide value to my client in the time available in the iLab course.
+Whilst CIC have access to tools like the Xerox Incremental Parser (used as the basis for the Academic Writing Analysis tool) and these tools are showing promise in specific areas of research, I cannot envision a scenario where I would be able to learn and use these tools to provide value to my client in the time available in the iLab course. For this reason I will leave these tools out of scope for this project.
+
+## Word Association
+
+In general, we are interested in finding two different types of word relations:
+
+**paradigmatic** - _substitutions_ - A & B have a paradigmatic relationship if they can be substituted for each other. Examples include "cat" and "dog", or "Monday" and "Tuesday".
+
+**syntagmatic** - _combinations_ - A & B have a syntagmatic relationship if they can be combined with each other. Examples include "cat" and "sit", or "car" and "drive".
+
+These two relations can be generalised to describe relations of any kind in any language.
+
+Word associations are useful because they can be used for:
+
+* Improving the accuracy of many NLP tasks
+* They can suggest word substitutions for modifying queries in text retrieval
+* Automatically construct a topic map for browsing - words as nodes and associations as edges
+* Comparing and summarising opinions (what words are most strongly associated with "battery" in positive and negative reviews about the iPhone 6?)
+
