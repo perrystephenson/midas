@@ -34,3 +34,11 @@ Given the dataset is only 6,000 records, it seems that text retrieval techniques
 
 ## Text Mining
 
+Text mining is normally focused on extracting information from text which was created by humans (as opposed to text created by machines, such as access logs or SCADA events). In this way, the human is performing the role of a sensor which perceives the real world and expresses that information in a semi-standardised format (in this case, the English language). Analysing collections of text produced in this way can give you information about:
+
+1. The format (language)
+2. The observer's perception of the world
+3. The observer (sentiment, etc)
+4. The real world (including predictions)
+
+These are arranged in order of difficulty - using the text alone it is hard to make meaningful generalisations about the real world, but relatively easy to discover information about the format (the written English language). The addition of non-text data can improve the ability to generalise in both directions. It can help generalise about the real world, as it adds new information with a different creation process. It can also help provide context for the text analysis - this could be in the form or labels, or other contextual information.
