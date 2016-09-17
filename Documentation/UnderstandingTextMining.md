@@ -86,3 +86,18 @@ It is also possible to encode even more information and obtain logic predicates 
 
 In summary, moving towards **deeper** NLP techniques involves encoding **more** information with the words to allow a better understanding of the knowledge encapsulated within the text. However these techniques come at the expense of robustness, and require orders of magnitude more human involvement.
 
+### Enabled Analysis
+
+The [Coursera Text Mining](https://www.coursera.org/learn/text-mining) course presents an excellent overview of how each level of NLP tagging allows additional types of analysis - the table is reproduced here for quick reference.
+
+| Text Representation | Generality | Enabled Analysis | Examples of Application |
+|---|---|---|---| 
+| String | Very High | String processing | Compression |
+| Words | High | Word relation analysis, topic analysis, sentiment analysis | Thesaurus discovery, topic and opinion related applications |
+| + Syntactic Structures | Medium | Syntactic graph analysis | Stylistic analysis, structure based feature extraction |
+| + Entities and Relations | Low | Knowledge graph analysis, information network analysis | Discovery of knowledge and opinions about specific entities |
+| + Logic Predicates | Very Low | Integrated analysis of scattered knowledge, logic inference | Knowledge assistant for biologists |
+
+In terms of how this interacts with my iLab project, these new learnings are guiding me very strongly towards techniques using the "sequence of words" representation of text. These techniques are very powerful and generalise well (in English at least, where word boundaries are easily detected). There is obviously increased value available by moving up the text representation complexity chain, however I cannot see a lot of value in learning complex techniques which do not generalise well unless I have already mastered the techniques at the more general level.  
+
+Whilst CIC have access to tools like the Xerox Incremental Parser (used as the basis for the Academic Writing Analysis tool) and these tools are showing promise in specific areas of research, I cannot envision a scenario where I would be able to learn and use these tools to provide value to my client in the time available in the iLab course.
