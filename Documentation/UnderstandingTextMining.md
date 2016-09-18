@@ -119,3 +119,27 @@ Word associations are useful because they can be used for:
 * Automatically construct a topic map for browsing - words as nodes and associations as edges
 * Comparing and summarising opinions (what words are most strongly associated with "battery" in positive and negative reviews about the iPhone 6?)
 
+Word association techniques involve examining the context of a word, and then making generalisations about how that word is associated with other words based on comparison of those different contexts. For example, looking at the words which appear before and after the words "cat" and "dog", you can see that the context is fairly similar, and therefore the words have a strong paragidmatic relationship. Similarly, correlated occurence of words (such as words that appear either side of the word "eats") can be used to understand which words "go together" in a syntagmatic relationship.
+
+#### Paradigmatic Relations
+
+* Represent each word by its context
+* Compute context similarity
+* Words with **high context similarity** likely have a paradigmatic relation
+
+The techniques for discovering these relationships broadly involve representing each context (bag-of-words) as an M-dimentional vector (where M is the number of words in the document), and then calculating the dot product of vectors to calculate similarity. There are some adjustments required to help this method find more meaningful relationships by down-weighting common words and up-weighting rare words. Given that it is unlikely I will have to implement such a system from scratch, I won't go into any further detail here.
+
+#### Syntagmatic Relations
+
+* Count how many times two words appear together in a context
+* Compare their co-occurrences with their individual occurrences
+* Words with **high co-occurrences but relatively low individual occurrences** likely have a syntagmatic relation
+
+The techniques for discovering these relationships broadly involve considering conditional entropy, an understanding of which is again beyond the scope of this iLab project.
+
+It is worth noting that **paradigmatically** related words tend to have a **syntagmatic** relation with the same word - this allows **joint discovery** of the two relations.
+
+It is also worth pointing out that word association approaches are **unsupervised** and are based on properties of the dataset. This is important for situations where labelled data is not available. Additionally, where a common language is used between datasets, pre-trained word associations (for example, the pre-trained **GloVe** models) can be used to provide additional information to help interpret a new text dataset.
+
+One challenge with the application of word association approaches is that the definition of **context** is critical, and it needs to be defined with consideration of how the results will be used. This may or may not be solved by advanced off-the-shelf techniques as I progress through the course!
+
