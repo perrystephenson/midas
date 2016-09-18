@@ -39,7 +39,7 @@ This paradigm provides a nice breakdown for how different techniques apply to di
 
 1. Understanding the individual texts ([NLP](#natural-language-processing) and [text representation](#text-representation))
 2. Making generalisations about the language ([word association](#word-association))
-3. Understanding the observer's perception of the world (topic mining)
+3. Understanding the observer's perception of the world ([topic mining](#topic-mining))
 4. Inferences about the observer (Opinion mining and sentiment analysis)
 5. Predictions about the real world (text-based prediction)
 
@@ -143,3 +143,33 @@ It is also worth pointing out that word association approaches are **unsupervise
 
 One challenge with the application of word association approaches is that the definition of **context** is critical, and it needs to be defined with consideration of how the results will be used. This may or may not be solved by advanced off-the-shelf techniques as I progress through the course!
 
+## Topic Mining
+
+Topic Mining aims to discover the main theme or subject of a text. This can be discovered at different levels of granularity - for example a book can have a topic, as can a sentence or a tweet. Topics will ideally provide information about the real world which can be used to generalise and make predictions or prescriptions.
+
+We might be interested in knowing how much each topic is covered in each document - for example in this iLab you could identify how "strongly" different Research Impact Statements covered different topics.
+
+The general steps involved in topic mining are:
+
+1. Discover topics from the data
+  - Sample and manually label topics based on inspection of the data 
+  - Use an algorithm to find topics (normally a specified number of topics)
+2. Figure out which documents cover which topics (probabilistically)
+
+One approach is to define a topic as a "term", i.e. a word or a phrase. This could be done manually, or could be obtained from the text. To obtain terms from the text:
+
+1. Parse the text to obtain candidate terms
+2. Design a scoring function to determine how good each term is as a topic
+  - Favour high-frequency terms (representative)
+  - Avoid words which are too frequent
+  - TF-IDF weighting can be useful
+  - Domain-specific heuristics can be useful (hashtags, etc)
+3. Pick _**k**_ terms with the highest scores, but aiming to minimise redundancy (avoid correlations)
+
+This approach has some issues:
+
+* Less expressive power (general topics only, as we are limited to single words or phrases)
+* Incompleteness in vocabulary coverage (missing related words, we only know about relations we can discover in the dataset)
+* Word sense ambiguity (words mean different things, and this can be hard to resolve).
+
+Basically, this approach is no good! Need to look at something more sophisticated.
