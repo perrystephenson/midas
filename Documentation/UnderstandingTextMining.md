@@ -156,6 +156,8 @@ The general steps involved in topic mining are:
   - Use an algorithm to find topics (normally a specified number of topics)
 2. Figure out which documents cover which topics (probabilistically)
 
+### Term as a Topic
+
 One approach is to define a topic as a "term", i.e. a word or a phrase. This could be done manually, or could be obtained from the text. To obtain terms from the text:
 
 1. Parse the text to obtain candidate terms
@@ -173,3 +175,9 @@ This approach has some issues:
 * Word sense ambiguity (words mean different things, and this can be hard to resolve).
 
 Basically, this approach is no good! Need to look at something more sophisticated.
+
+### Generative Model
+
+You could similarly look at using a **word distribution** instead of a single word or phrase. For this approach you could build a probability distribution for each topic, based on the probability of observing each specific word if you sample words at random from documents which have that topic. If you then assume that the documents were generated as random processes which can be parameterised according to such a model, then you can use gradient descent (or another optimisation algorithm) to find the set of parameters which **maximises the probability** of the observed set of documents having been created by such a system. You can then inspect the parameters to uncover the topics which were discovered, as well as the topic coverage in each of the documents.
+
+The most simple of these is a "unigram" language model, which assumes that each word is generated independently, and that word order within a document does not matter. You can then use the observed data (the text you are mining) to build an estimate of the parameters for the model which "generated" your observations, using a maximum likelihood approach.
