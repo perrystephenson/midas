@@ -2,7 +2,7 @@
 
 _This document will cover the planning aspects for the first phase of this project, specifically the iLab project being undertaken by Perry Stephenson in Spring Semester 2016. The project will likely be handed back to Simon Knight following the completion of the iLab subject, and this project plan makes the assumption (below) that the project will be picked up again by another student in a future iLab._
 
-## Justification and Stakeholder Needs
+## Client Requirements and Objectives
 
 This project (as posed by the client Simon Knight) is predominantly an exploratory analysis of one or more large academic writing datasets. As an entirely academic pursuit the project is focused entirely on insight discovery, and discussions with the client have not identified any formal requirements other than the implied requirements for high-quality analysis and documentation. The client has identified some potential outcomes from the analysis which will form a loose set of objectives:
 
@@ -16,10 +16,6 @@ Whilst each of these objectives is entirely possible to achieve, it is unlikely 
 * finishing one thing well is more important than starting on many things
 
 These principles give the client the best chance of benefiting from productive and fruitful iLab projects in future.
-
-## Requirements and Objectives
-
-Placeholder
 
 ## Project Scope Statement
 
