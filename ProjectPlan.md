@@ -31,7 +31,16 @@ This scope may be adjusted throughout the project if unforeseen delays make one 
 
 ## Estimated Schedule
 
-Placeholder
+The schedule for the remainder of the project is hard to predict, as the critical path is entirely dependent on how many hours I spend on the project per week. It therefore seems more suitable to identify the key dates imposed by the university calendar, and the scope elements which need to be completed by that date.
+
+| Date | Event | Scope Elements Delivered |
+|---|---|---|
+| 25 September | Assignment 1 - Blog Part B | 1, 2 |
+| 13 October | Assignment 2 - In-class Presentations | 3, 4 |
+| 22 October | Assignment 1 - Blog Part C | N/A |
+| 6 November | Assignment 3 - Professional Showcase | 5 |
+
+These deadlines may be adjusted as the formal requirements for each assessment are fleshed out in CIC Around discussions.
 
 ## Risk Assessment and Management Plan
 
