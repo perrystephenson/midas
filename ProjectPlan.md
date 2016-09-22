@@ -44,11 +44,31 @@ These deadlines may be adjusted as the formal requirements for each assessment a
 
 ## Risk Assessment and Management Plan
 
-Placeholder
+A formal quantified risk assessment is likely overkill for a project like this, however it is worth reflecting on some of the key risks for the project.
+
+##### A. Unable to learn appropriate text mining skills
+
+If I am unable to obtain the necessary skills in time to put them to use in this project, then there is a risk to scope items #3 and #4. Fortunately I already have a reasonable skillset in the text mining area, so I should be able to conduct detailed analysis and produce useful insights regardless of whether or not I am able to extend my skills further.
+
+##### B. Personal Time Management
+
+As I am working solo on this iLab and don't have any team members to keep me on track, there is a risk that I could lose focus and fail to achieve my objectives in line with the schedule above. I have partly mitigated this by selecting a topic that is closely related to my work, which results in some handy synergies and efficiencies. I have also chosen to take the iLab subject by itself this semester, ensuring that there are minimal distractions throughout the project. Personal time management is unlikely to be an issue.
+
+##### C. Finding Nothing
+
+Until the point at which I get the first useful insight from the data, there is a risk that there will be no significant findings. The insights could be obvious and/or insignificant, and there may be no practical use cases for what I develop. Some potential mitigations for this are:
+
+* Accept that a null finding still has value, and adds to CIC's body of knowledge
+* Ensure that I have the appropriate skills and toolset before commencing technical work on the project
+* Make sure that the visualisation approach adds value, regardless of the analytical findings
+
+None of these risks are deal-breakers, and they conveniently also have the same key risk control strategy: _work really really hard_. I'd better get to it!
 
 ## Communication Plan
 
-Placeholder
+The communication plan for this project is reasonably straight forward, as the client has taken responsibility for communications with all of the university stakeholders. These relationships do not significantly impact the project at this point, as I do not require their input to successfully execute each of the scope elements of my iLab project. Their involvement will become more important as the project progresses in future iLab semesters, which means that the output of my iLab will be a useful discussion aid when negotiating their further involvement. Given the current level of interest from university stakeholders it seems unlikely that any further communications will be required prior to the final showcase.
+
+The final showcase will be a key communication with the university stakeholders, as it will effectively kick off future discussions about how this project might be of benefit to the university. For this reason, I will consider the stakeholder's interest in the project when designing my final showcase presentation.
 
 ## Delivery Plan
 
