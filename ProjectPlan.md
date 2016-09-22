@@ -72,4 +72,10 @@ The final showcase will be a key communication with the university stakeholders,
 
 ## Delivery Plan
 
-Placeholder
+It is challenging to develop a delivery plan at this stage as it is still unclear what is formally required as part of the assessment. I can however identify elements that I would like to present as part of the delivery:
+
+* Static report detailing the analytical approaches undertaken, and showcasing the results
+* Dynamic presentation (using a tool which I will build), exploiting the findings of the analysis to help academic authors understand more about the use of language in impact case studies
+* Structured presentation as a showcase, potentially at UTS or the Data Science Sydney meetup group.
+
+The allocation of these three elements into the formal assessment processes will be determined once the requirements are made clear.
