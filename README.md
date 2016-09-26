@@ -2,7 +2,7 @@
 _A.K.A. The Derek Zoolander Centre for Researchers Who Can’t Impact Case Study Good_
 
 ### About this repository
-This repo will contain both code and documentation for my Impact McImpactface project, which is being completed as part of the Master of Data Science and Innovation "iLab 1" subject. Using Git for both code and documentation will allow version control for both elements, and will allow future students engaging with this challenge (future MDSI students) to simply fork the repository and start working. 
+This repo contains both code and documentation for my Impact McImpactface project, which is being completed as part of the Master of Data Science and Innovation "iLab 1" subject. Using Git for both code and documentation allows version control for both elements, and will allow future students engaging with this challenge (future MDSI students) to simply fork the repository and start working. 
 
 ## The Project
 ### Original Specification
@@ -12,6 +12,10 @@ The course outline for this subject can be accessed [here](https://ca.uts.edu.au
 
 ### Additional Notes
 The Connected Intelligence Centre (CIC) has an existing body of work aiming to use Natural Language Processing tools to parse written works and make suggestions about how to improve those works. One potential outcome for this project could be a similar system to assist researchers writing research grants, impact case studies, etc.
+
+## Code
+
+[refimpact](https://github.com/perrystephenson/refimpact) - I wrote some R functions to interface with the REF 2014 Impact Case Studies Database API, then turned them into a package. Version 0.1.0 coming soon to CRAN.
 
 ## Documentation
 
@@ -25,3 +29,13 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 [Prior analysis of this dataset (Kings College)](http://www.kcl.ac.uk/sspp/policy-institute/publications/Analysis-of-REF-impact.pdf)
 
 [Parsey McParseface (Google's English Language Parser)](https://research.googleblog.com/2016/05/announcing-syntaxnet-worlds-most.html)
+
+[Coursera - Text Mining MOOC](https://www.coursera.org/learn/text-mining)
+
+[text2vec - R package](https://cran.r-project.org/web/packages/text2vec/)
+
+[Academic Writing Analysis - UTS CIC](https://utscic.edu.au/tools/awa/)
+
+[Global Vectors for Word Presentation - GloVe](http://nlp.stanford.edu/projects/glove/)
+
+[How is GloVe different to word2vec](https://www.quora.com/How-is-GloVe-different-from-word2vec)
