@@ -23,7 +23,7 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 
 [Developing Data Science Hygiene](./Documentation/DevelopingDSH.md) - the process I went through when developing the above document.
 
-## Reference
+## Reference and Inspiration
 [API for accessing the Impact Case Studies dataset](http://impact.ref.ac.uk/CaseStudies/APIhelp.aspx)
 
 [Prior analysis of this dataset (Kings College)](http://www.kcl.ac.uk/sspp/policy-institute/publications/Analysis-of-REF-impact.pdf)
@@ -39,3 +39,5 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 [Global Vectors for Word Presentation - GloVe](http://nlp.stanford.edu/projects/glove/)
 
 [How is GloVe different to word2vec](https://www.quora.com/How-is-GloVe-different-from-word2vec)
+
+[Song Lyrics Across the United States](http://juliasilge.com/blog/Song-Lyrics-Across/)
