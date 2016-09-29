@@ -41,3 +41,5 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 [How is GloVe different to word2vec](https://www.quora.com/How-is-GloVe-different-from-word2vec)
 
 [Song Lyrics Across the United States](http://juliasilge.com/blog/Song-Lyrics-Across/)
+
+[Structural Topic Modelling](https://github.com/bstewart/stm)
