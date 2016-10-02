@@ -1,39 +1,29 @@
 # Understanding Text Mining
 
-Text Mining is a huge field. Knowing where to start on a text-based data science project is impossible without an understanding of what techniques are available, and what sort of problems they can be used to solve. This document is an attempt to understand the scope of available text mining techniques in 2016, but with a specific focus on the tasks involved in this iLab project. They key features of this project as they relate to the selection of text mining approaches are:
+Text Mining is a huge field. Knowing where to start on a text-based data science project is impossible without an understanding of what techniques are available, and what sort of problems they can be used to solve. This document is an attempt to understand the scope of available text mining techniques in 2016, but with a specific focus on the tasks involved in this iLab project. 
 
-* Approximately 6,000 records
-* No labels available
-* Several paragraphs of text in each record
-* Text is highly edited and reviewed, and likely to be fairly consistent within the corpus.
 
-### _Attribution_
+## Limitations and Scope
 
-_Most of the material in this document is adapted from notes that I took whilst studying the [Coursera Text Mining](https://www.coursera.org/learn/text-mining) course from the University of Illinois at Urbana-Champaign. I make no claim to copyright over any of this material._
+Text mining isn't wizardry. Given a suitably sized army of text-labelling humans, you could beat any of the current state-of-the-art text mining approaches. Text mining therefore aims to do things that humans can do, but aims to do those things much more quickly and with less resources. It could be said that the purpose of text mining is to:
 
-### Scope
+1. minimise human effort, and
+2. supply knowledge
 
-The lecturer in the course mentioned above makes a careful point of explaining that text mining and text retrieval are related but different fields. The lecturer indicated that "text retrieval" is used to search through a "big data" dataset and find a workable set of "relevant" data. Text mining is then used to find useful knowledge from this corpus of relevant data.
+It is worth keeping in mind that text mining typically cannot "discover" things which humans could not discover if given sufficient time and resources. Machine learning brings power, speed, complexity and consistency to the text mining problem in a way that makes it useful for extracting information from text and representing that information to make it useful for decision making.
 
-The course defined Text Mining as the process of turning text data into **high-quality information** or **actionable knowledge**. It should:
-
-* minimise human effort (minimise consumption effort)
-* supply knowledge for optimal decision-making
-
-The course also specifies that **text retrieval** is an essential component of any text mining system. It can be a pre-processor for text mining, and it is needed for knowledge provenance.
-
-Given the dataset is only 6,000 records, it seems that text retrieval techniques are overkill for this iLab project. For the sake of completion it still makes sense to understand the techniques available in text retrieval and the associated use-cases. This will be covered at the end of the iLab project, if not required organically during the project.
 
 ## Text Mining
 
-Text mining is normally focused on extracting information from text which was created by humans (as opposed to text created by machines, such as access logs or SCADA events). In this way, the human is performing the role of a sensor which perceives the real world and expresses that information in a semi-standardised format (in this case, the English language). Analysing collections of text produced in this way can allow you to reason about:
+Text mining is normally focused on extracting information from text which was created by humans, as opposed to text created by machines such as access logs or SCADA events. You can view the human as performing the role of a sensor which perceives the real world and expresses that information in a semi-standardised format (in this case, the English language). Analysing collections of text produced in this way can allow you to reason about:
 
 1. The format (language)
 2. The observer's perception of the world
-3. The observer (sentiment, etc)
-4. The real world (including predictions)
+3. The observer (sentiment, opinion, etc)
+4. The real world 
+5. The reason the observer wrote the text (speech act)
 
-These are arranged in order of difficulty - using the text alone it is hard to make meaningful generalisations about the real world, but it is possible to discover information about the format (the written English language). The addition of non-text data can improve the ability to generalise in both directions; it can help generalise about the real world, as it adds new information with a different creation process, and it can also help provide context for the text analysis (this could be in the form of labels, or other contextual information).
+These are arranged in order of difficulty - using the text alone it is hard to make meaningful generalisations about the real world, but it is possible to discover information about the format (the written English language) and perhaps even some information about the observer. The addition of non-text data can improve the ability to generalise in both directions; it can help generalise about the real world, as it adds new information with a different creation process, and it can also help provide context for the text analysis (this could be in the form of labels, or other contextual information).
 
 This paradigm provides a nice breakdown for how different techniques apply to different objectives:
 
@@ -80,7 +70,7 @@ Text can be represented in several ways:
 * sequence of words with part-of-speech tags and syntactic structures
 * sequence of words with part-of-speech tags, syntactic structures, entities and relations
 
-With the exception of the step from string of characters to sequence of words, each representation is encoding *more* information along with the words, using an understanding of the language to extract more of the meaning from the text. The final dot point (sequence of words with part-of-speech tags, syntactic structures, entities and relations) represents the current bleeding edge at companies like Google, however this comes at the expense of robustness. 
+With the exception of the step from string of characters to sequence of words, each representation is encoding *more* information along with the words, using an understanding of the language to extract more of the meaning from the text. The final dot point (sequence of words with part-of-speech tags, syntactic structures, entities and relations) represents the current bleeding edge at companies like Google, however this comes at the expense of robustness and the ability to generalise. 
 
 It is also possible to encode even more information and obtain logic predicates and inference rules from the text, and even make inferences about the intent of the speaker, however this is even less robust. This is not worth pursuing for this iLab given the current level of maturity in the NLP space.
 
@@ -210,9 +200,9 @@ The parameters are regularised in an LDA, and it can achieve the same goal as PL
 
 LDA has less parameters than PLSA. Lots of different approaches. Main point is that you can provide priors. Less likely to overfit. Likely to be similar to PLSA in practice.
 
-### Text Clustering
+## Text Clustering
 
-Topic mining allows one document to cover multiple topics. Topic clustering only allows one topic per document (so each topic is a single cluster of documents).
+Topic mining (above) allows one document to cover multiple topics. Topic clustering is similar to topic mining, except that it only allows one topic per document. You can think of topic mining as identifying themes which may be present in documents, where clustering is about grouping entire documents into collections based on similarity.
 
 #### Generative Probabilistic Models
 
