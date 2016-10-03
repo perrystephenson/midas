@@ -23,6 +23,20 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 
 [Developing Data Science Hygiene](./Documentation/DevelopingDSH.md) - the process I went through when developing the above document.
 
+## R Packages of Interest
+
+[text2vec](https://cran.r-project.org/web/packages/text2vec/)
+
+[Structural Topic Modelling](https://github.com/bstewart/stm)
+
+[tokenizers](https://cran.r-project.org/web/packages/tokenizers/index.html)
+
+[lda](https://cran.r-project.org/web/packages/lda/lda.pdf)
+
+[tidytext](https://github.com/juliasilge/tidytext)
+
+[hunspell](https://github.com/ropensci/hunspell)
+
 ## Reference and Inspiration
 [API for accessing the Impact Case Studies dataset](http://impact.ref.ac.uk/CaseStudies/APIhelp.aspx)
 
@@ -32,8 +46,6 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 
 [Coursera - Text Mining MOOC](https://www.coursera.org/learn/text-mining)
 
-[text2vec - R package](https://cran.r-project.org/web/packages/text2vec/)
-
 [Academic Writing Analysis - UTS CIC](https://utscic.edu.au/tools/awa/)
 
 [Global Vectors for Word Presentation - GloVe](http://nlp.stanford.edu/projects/glove/)
@@ -42,4 +54,4 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 
 [Song Lyrics Across the United States](http://juliasilge.com/blog/Song-Lyrics-Across/)
 
-[Structural Topic Modelling](https://github.com/bstewart/stm)
+
