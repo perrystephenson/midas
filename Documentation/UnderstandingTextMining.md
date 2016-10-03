@@ -1,6 +1,6 @@
 # Understanding Text Mining
 
-Text Mining is a huge field. Knowing where to start on a text-based data science project is impossible without an understanding of what techniques are available, and what sort of problems they can be used to solve. This document is an attempt to understand the scope of available text mining techniques in 2016, but with a specific focus on the tasks involved in this iLab project. 
+Text Mining is a huge field. Knowing where to start on a text-based data science project is impossible without an understanding of what techniques are available, and what sort of problems they can be used to solve. This document is an attempt to understand the scope of available text mining techniques in 2016, but with a specific focus on the tasks involved in this iLab project. General machine-learning and data science topics will not be covered and I have assumed that the reader is familiar with machine learning techniques.
 
 
 ## Limitations and Scope
@@ -29,9 +29,9 @@ This paradigm provides a nice breakdown for how different techniques apply to di
 
 1. Understanding the individual texts ([NLP](#natural-language-processing) and [text representation](#text-representation))
 2. Making generalisations about the language ([word association](#word-association))
-3. Understanding the observer's perception of the world ([topic mining](#topic-mining))
-4. Inferences about the observer (Opinion mining and sentiment analysis)
-5. Predictions about the real world (text-based prediction)
+3. Understanding the observer's perception of the world ([topic mining](#topic-mining), [text clustering](#text-clustering) and [text categorisation](#text-categorisation))
+4. Inferences about the observer ([opinion mining](#opinion-mining), [sentiment classification](#sentiment-classification) and [text categorisation](#text-categorisation))
+5. Predictions about the real world ([text-based prediction](#text-based-prediction) and [text categorisation](#text-categorisation))
 
 The rest of this document will be structured around these 5 areas - you can click the links above to jump straight to any of the sections below.
 
@@ -256,9 +256,7 @@ Categories can be **internal** (e.g. topic, sentiment) or **external** (e.g. abo
 * Hierarchical categorisation
 * Joint categorisation
 
-### Methods
-
-#### Manual Categorisation
+### Manual Categorisation
 
 This approach determines the category based on carefully designed rules using the existing domain knowledge (i.e. keyword searches and simple decision trees). This approach works well when:
 
@@ -268,7 +266,7 @@ This approach determines the category based on carefully designed rules using th
 
 This approach is labour intensive and does not scale well for large numbers of categories. There is also little capacity to allow for uncertainty in rules, and the human element can lead to inconsistencies within the rules.
 
-#### Automatic Categorisation
+### Automatic Categorisation
 
 This approach defines categories using machine learning to train classification models, based on labelled training data provided by a human. This approach aims to automatically replicate the categorisation applied by the human. A detailed treatment of machine learning is out of scope for this (already very long) overview document, however the key features of such an approach are:
 
@@ -276,3 +274,90 @@ This approach defines categories using machine learning to train classification 
 * the model could build a binary or a probabilistic classifier, and this may include linear and non-linear combinations of these features.
 
 Modelling approaches can be discriminative or generative. Generative classifiers learn what the data "looks like" in each category and aim to maximise likelihood - naive bayes is an example of this approach. Discriminative classifiers aim to identify differences between categories and exploit these to predict the most appropriate classification - logistic regression, SVM, k-NN are examples of this approach.
+
+Essentially, automatic topic categorisation is the closest you can get to "vanilla" machine learning when working with text. Unigrams, n-grams, skip-grams etc can be used to create a sparse feature-space, and then any appropriate ML techniques can be used to learn an appropriate model.
+
+## Opinion Mining
+
+There are lots of things we might like to know about an opinion represented in text:
+
+* Who does the opinion belong to?
+* What entity is the opinion about?
+* What is the opinion?
+* In what situation was the opinion expressed?
+* What does the opinion tell us about the opinion holder's sentiment?
+
+These elements are easy for a human to extract, but to do so using a computer requires the use of NLP techniques - in particular the deeper techniques like semantic analysis. This is really hard to do with current techniques, so the easiest way to obtain this information is externally! This obviously depends on the data available and your specific context.
+
+### Latent Aspect Rating Analysis
+
+This allows us to provide detailed analysis of text like reviews. It allows you to break down a single score into k latent scores - for example an overall 5 star review for a hotel might be broken down into value, rooms, service, location etc.
+
+Given a set of such reviews, LARA aims to discover:
+
+* major aspects commented on in the reviews
+* ratings for each of the latent aspects
+* relative importance of each of those aspects, for each reviewer (weightings)
+
+LARA is performed in two stages:
+
+1. Get the count of terms from the document, and allocate each of the term counts to their aspect segment
+2. Latent Rating Regression, which encompasses:
+  1. multipluing the term counts by the latent term weightings
+  2. adding the term weightings for each latent aspect to identify the aspect rating
+  3. multiplying these aspect ratings by aspect weightings to predict the overall score.
+
+The latent weightings are learned using a generative model, similar to PLSA. The k latent aspects are normally specified manually, and the keywords in those latent aspects can be learned through many of the previously discussed techniques.
+
+Unfortunately at this stage it does not seem that anyone has implemented this approach in R or Python.
+
+
+## Sentiment Classification
+
+Sentiment can be viewed in a few ways:
+
+* Polarity (positive/neutral/negative, or more categories if needed)
+* Emotion (happy/sad/fearful/angry/surprised/disgusted)
+
+Viewing sentiment through these lenses is simply a special case of text categorisation, which means that all of the existing ML techniques can be used to help train classifiers for sentiment. In addition, there may be an implied order within the categories, which can benefits from tools such as ordinal regression.
+
+## Text-Based Prediction
+
+Using context helps every step of the text mining workflow. It can help generate effective predictors from text by helping with every step of the text-mining workflow.
+
+Text often has rich context information:
+
+* direct (location, time, author, source)
+* indirect (social network of author, other text by same author, author's age)
+* any other related data
+
+This context can be used to partition data for comparative analysis, or to provide meaning to the discovered topics. Questions which might be asked include:
+
+* What topics are increasing/decreasing in importance over time?
+* Is there any difference in the text (topics or otherwise) when partitioned by geography?
+* What are some commonalities between different authors?
+* Do authors write differently based on the medium? e.g. different social networks
+* Are any topics correlated with important external events?
+* What issues "mattered" in an election campaign?
+
+### Contextual Probabilistic Latent Semantic Analysis
+
+This is an extention to PLSA which allows context variables influence both the coverage and the content of topics in the model. In the generative model, the set of possible contexts now has a set of weightings which influence the selection of a topic distribution when selecting a word to appear in the document.
+
+Contexts can also be derived from other known information - for example you can use knowledge about historical events to identify differences in text before/after an event.
+
+
+## Text Features
+
+This is section applies equally to all techniques where features are derived from text to be used in text mining algorithms. 
+
+Some commonly used text features include:
+
+* Character n-grams (normally with a range of n values) - less discriminative than unigrams however they can be more robust to spelling mistakes
+* Word n-grams (sometimes with a small range of n values) allow for context and to some degree allows part-of-speech to be used.
+* POS tag n-grams - mixed n-gram with words and POS tags (for example "ADJECTIVE_NOUN" or "great_NOUN", etc
+* Word classes (POS tag, semantic concept, paradigmatically or syntagmatically related words)
+* Frequent patterns (frequent word set, collocations, etc)
+* Parse-tree based (frequent subtrees, paths, etc)
+
+Generating these features is a programming problem, so it won't be covered here.
