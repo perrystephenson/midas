@@ -346,6 +346,31 @@ This is an extention to PLSA which allows context variables influence both the c
 
 Contexts can also be derived from other known information - for example you can use knowledge about historical events to identify differences in text before/after an event.
 
+### Network Supervised Topic Modelling
+
+Authors may be connected through collaborative, social or geographical networks. Such connections can provide additional context for text mining and may allow for joint analysis of the context and the text. Some examples of interaction between the author's network context and text content include:
+
+* the network may impose constraints on topics, as well-connected authors are likely to write about similar topics
+* text helps characterise the content associated with each sub-network (i.e. what are the differences of opinion between two sub-networks?)
+
+One technique for this is NetPLSA, which is like a standard PLSA approach but with the added constraint of a network imposed on the solution.
+
+### Text Mining for Understanding Time Series
+
+* What can text information tell us about a movement in a metric we care about? (e.g. what news articles are relevant when inspecting movements in stock markets?)
+* What can topics "matter" in news coverage about political candidates?
+
+This can be performed by applying a standard PLSA topic model to the text stream, and assessing the coverage over time. This approach is not bad, however it is limited to the topics discovered by PLSA, and ignores the time-series information available. 
+
+To incorporate the time-series information, you can use select the PLSA topics which show the strongest correlation with the time-series signal of interest, and then consider the top ranked words/tokens within those topic distributions. You then assess each word/token for it's individual correlation with the time-series signal, and build two new topics based on positively correlated words/tokens and negatively correlated words/tokens. These two new topics are similar to the PLSA topics, however they are *more related* to the time-series signal. You can then use these topics as a prior when retraining the PLSA, and then repeatedly iterate to get closer correlations.
+
+This approach aims to strike a balance between topic coherence and time-series correlation/causality. The strength of the relationship can be quantified using:
+
+**Pearson Correlation Test** - useful for quantifying whether there is a correlation between two signals.
+
+**Granger Causality Test** - often useful for quantifying whether the text is causally linked with the time-series signal of interest.
+
+This is an active research topic, and there do not appear to be any implemented methods for applying it to real-world problems.
 
 ## Text Features
 
@@ -355,7 +380,7 @@ Some commonly used text features include:
 
 * Character n-grams (normally with a range of n values) - less discriminative than unigrams however they can be more robust to spelling mistakes
 * Word n-grams (sometimes with a small range of n values) allow for context and to some degree allows part-of-speech to be used.
-* POS tag n-grams - mixed n-gram with words and POS tags (for example "ADJECTIVE_NOUN" or "great_NOUN", etc
+* POS tag n-grams - mixed n-gram with words and POS tags (for example "ADJECTIVE\_NOUN" or "great\_NOUN", etc
 * Word classes (POS tag, semantic concept, paradigmatically or syntagmatically related words)
 * Frequent patterns (frequent word set, collocations, etc)
 * Parse-tree based (frequent subtrees, paths, etc)
