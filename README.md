@@ -23,6 +23,8 @@ The Connected Intelligence Centre (CIC) has an existing body of work aiming to u
 
 [Developing Data Science Hygiene](./Documentation/DevelopingDSH.md) - the process I went through when developing the above document.
 
+[Understanding Text Mining](./Documentation/UnderstandingTextMining.md) - a review of the set of text mining techniques which are currently available.
+
 ## R Packages of Interest
 
 [text2vec](https://cran.r-project.org/web/packages/text2vec/)
