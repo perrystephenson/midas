@@ -13,6 +13,8 @@ The course outline for this subject can be accessed [here](https://ca.uts.edu.au
 ### Additional Notes
 The Connected Intelligence Centre (CIC) has an existing body of work aiming to use Natural Language Processing tools to parse written works and make suggestions about how to improve those works. One potential outcome for this project could be a similar system to assist researchers writing research grants, impact case studies, etc.
 
+The project plan can be viewed [here](./ProjectPlan.md).
+
 ## Code
 
 [refimpact](https://github.com/perrystephenson/refimpact) - I wrote some R functions to interface with the REF 2014 Impact Case Studies Database API, then turned them into a package. Version 0.1.0 coming soon to CRAN.
