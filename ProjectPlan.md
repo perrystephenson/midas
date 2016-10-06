@@ -21,8 +21,9 @@ These principles give the client the best chance of benefiting from productive a
 
 This iLab project will establish capability for the linguistic analysis of large text datasets. The key tasks which make up this phase of the project are:
 
-1. Identify and implement project structure and data science best practice to ensure project can be efficiently paused and handed over between iLab semesters.
-2. Research and document the scope of modern text mining practices, and identify suitable algorithms and approaches to meet client objectives.
+1. Identify and implement project structure and data science best practice to ensure project can be efficiently paused and handed over between iLab semesters
+2. Research and document the scope of modern text mining practices, and identify suitable algorithms and approaches to meet client objectives
+  1. Additionally, identify what characteristics are important when sourcing additional text datasets for this project
 3. Implement and document proof-of-concept analysis to demonstrate the viability of specific approaches
 4. Build an interactive tool for demonstration 
 5. Prepare and deliver presentation for client and stakeholders
