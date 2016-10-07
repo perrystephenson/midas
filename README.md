@@ -17,7 +17,7 @@ The project plan can be viewed [here](./ProjectPlan.md).
 
 ## Code
 
-[refimpact](https://github.com/perrystephenson/refimpact) - I wrote some R functions to interface with the REF 2014 Impact Case Studies Database API, then turned them into a package. Version 0.1.0 coming soon to CRAN.
+[refimpact](https://github.com/perrystephenson/refimpact) - I wrote some R functions to interface with the REF 2014 Impact Case Studies Database API and turned them into a package. Version 0.1.0 [now available on CRAN](https://cran.r-project.org/package=refimpact).
 
 ## Documentation
 
