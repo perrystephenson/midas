@@ -33,6 +33,12 @@ if(!require(caret)) {
   library(caret)
 }
 
+# glmnet
+if(!require(glmnet)) {
+  install.packages("glmnet")
+  library(glmnet)
+}
+
 # stm
 if(!require(stm)) {
   install.packages("stm")
