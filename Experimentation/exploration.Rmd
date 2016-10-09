@@ -2,7 +2,7 @@
 title: "UK REF Impact Case Studies - Exploration"
 author: "Perry Stephenson"
 date: "09/10/2016"
-output: html_document
+output: github_document
 ---
   
 _This script explores the UK REF Impact Case Studies dataset. The dataset was 
