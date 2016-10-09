@@ -200,6 +200,8 @@ The parameters are regularised in an LDA, and it can achieve the same goal as PL
 
 LDA has less parameters than PLSA. Lots of different approaches. Main point is that you can provide priors. Less likely to overfit. Likely to be similar to PLSA in practice.
 
+Without going into too much detail about how the LDA algoritm works, [this article](http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters) explains how to set the hyper-parameters.
+
 ## Text Clustering
 
 Topic mining (above) allows one document to cover multiple topics. Topic clustering is similar to topic mining, except that it only allows one topic per document. You can think of topic mining as identifying themes which may be present in documents, where clustering is about grouping entire documents into collections based on similarity.
