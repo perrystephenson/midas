@@ -1,13 +1,12 @@
 ---
 title: "UK REF Impact Case Studies - Exploration"
-author: "Perry Stephenson"
-date: "09/10/2016"
 output: github_document
 ---
   
 _This script explores the UK REF Impact Case Studies dataset. The dataset was 
 previously extracted from <http://impact.ref.ac.uk/CaseStudies/> using the 
-**refimpact** package, which was developed as part of this iLab project._
+refimpact package (which was developed as part of this iLab project) and saved
+locally to allow for faster access._
 
 ## Preparation
 
@@ -16,17 +15,55 @@ This analysis requires the **dplyr**, **tidytext** and **ggplot2** packages.
 library(dplyr)
 library(tidytext)
 library(ggplot2)
+library(stringr)
+library(wordcloud)
+library(coreNLP)
+library(tibble)
 ```
+
+## Selecting Data
+
+Before getting started with analysis, we might as well take a look at some of 
+the data. Firstly we will load it into memory and clean it up a little.
+```{r}
+ref <- readRDS("~/ref_data.rds")
+ref$Title <- 
+  str_replace_all(ref$Title, pattern = "[\\s]+", replace = " ")
+ref$UnderpinningResearch <- 
+  str_replace_all(ref$UnderpinningResearch, pattern = "[\\s]+", replace = " ")
+ref$Sources <- 
+  str_replace_all(ref$Sources, pattern = "[\\s]+", replace = " ")
+ref$References <- 
+  str_replace_all(ref$References, pattern = "[\\s]+", replace = " ")
+ref$ImpactSummary <- 
+  str_replace_all(ref$ImpactSummary, pattern = "[\\s]+", replace = " ")
+ref$ImpactDetails <- 
+  str_replace_all(ref$ImpactDetails, pattern = "[\\s]+", replace = " ")
+```
+
+There is a bunch of metadata to look at, but we're really interested in the 
+text. There are multiple pieces of text in each record:
+
+```{r}
+cat(paste(strwrap(ref$Title[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$UnderpinningResearch[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$Sources[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$References[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$ImpactSummary[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$ImpactDetails[1], 80), collapse="\n"))
+```
+
+There is a lot of information here, and a lot of future analysis for other iLab
+students! For me though, the objectives of the project are best served looking
+at the ImpactDetails column, as this has the largest body of text.
 
 ## Exploration
 
-The data was previously extracted and saved locally. The **unnest_tokens()** 
-function from the **tidytext** package is used to reshape the data into "tidy" 
-format, which allows simple analysis using packages like **dplyr** and 
-**ggplot2**.
+The **unnest_tokens()** function from the **tidytext** package is used to
+reshape the data into "tidy" format, which allows simple analysis using packages
+like **dplyr** and **ggplot2**.
 
 ```{r}
-ref <- readRDS("~/ref_data.rds")
 tidy_ref <- unnest_tokens(tbl = ref, 
                           output = word, 
                           input = ImpactDetails)
@@ -87,3 +124,50 @@ bing_word_counts %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   ylab("Contribution to sentiment")
 ```
+
+We can also use visualisation techniques like wordclouds to analyse these word
+distributions. 
+
+```{r, message=FALSE, warning=FALSE}
+library(wordcloud)
+tidy_ref %>%
+  count(word) %>%
+  with(wordcloud(word, n, max.words = 100))
+```
+
+You can also use comparative wordclouds to compare different sentimental words.
+
+```{r, message=FALSE, warning=FALSE}
+library(reshape2)
+tidy_ref %>%
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("#F8766D", "#00BFC4"),
+                   max.words = 80)
+```
+
+### Natural Language Processing
+
+The obvious next step is to look at the average sentiment of each sentence, look
+at which institutions are being more positive or more negative, but that's all a
+bit boring and doesn't really help with the iLab. So let's skip straight ahead 
+to the nail-with-a-sledgehammer approach and use the **coreNLP** package to 
+analyse an entire document. CoreNLP can deal with the data in its native format
+(i.e. without tokenisation) so we can jump straight into it. 
+
+Note that this is not worth running if you have less than 16GB memory in your 
+computer, and even then it might set it on fire with the heat your computer will
+generate. Given how slowly this runs, I will limit the analysis to a single case
+study (the same as the one at the top of this document).
+
+```{r, message=FALSE, warning=FALSE}
+initCoreNLP(mem="8g", 
+            parameterFile = "~/impactface/Experimentation/corenlp.properties")
+annoObj <- annotateString(ref$ImpactDetails[1])
+as_tibble(annoObj$token)
+as_tibble(annoObj$sentiment)
+```
+
+This is really slow to run, so it is probably not suitable for analysis of
+bulk text.
