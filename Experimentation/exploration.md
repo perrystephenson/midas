@@ -6,8 +6,6 @@ UK REF Impact Case Studies - Exploration
 Preparation
 -----------
 
-This analysis requires the **dplyr**, **tidytext** and **ggplot2** packages.
-
 ``` r
 library(dplyr)
 library(tidytext)
@@ -26,23 +24,23 @@ Before getting started with analysis, we might as well take a look at some of th
 ``` r
 ref <- readRDS("~/ref_data.rds")
 ref$Title <- 
-  str_replace_all(ref$Title, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$Title,                pattern = "[\\s]+", replace = " ")
 ref$UnderpinningResearch <- 
   str_replace_all(ref$UnderpinningResearch, pattern = "[\\s]+", replace = " ")
 ref$Sources <- 
-  str_replace_all(ref$Sources, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$Sources,              pattern = "[\\s]+", replace = " ")
 ref$References <- 
-  str_replace_all(ref$References, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$References,           pattern = "[\\s]+", replace = " ")
 ref$ImpactSummary <- 
-  str_replace_all(ref$ImpactSummary, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$ImpactSummary,        pattern = "[\\s]+", replace = " ")
 ref$ImpactDetails <- 
-  str_replace_all(ref$ImpactDetails, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$ImpactDetails,        pattern = "[\\s]+", replace = " ")
 ```
 
 There is a bunch of metadata to look at, but we're really interested in the text. There are multiple pieces of text in each record:
 
 ``` r
-cat(paste(strwrap(ref$Title[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$Title[1],                80), collapse="\n"))
 ```
 
     ## Influencing guidelines on management of hypertension following acute stroke
@@ -115,7 +113,7 @@ cat(paste(strwrap(ref$UnderpinningResearch[1], 80), collapse="\n"))
     ## while at UEA. Edward Wilson: Lecturer in Health Economics at UEA 2003-2013.
 
 ``` r
-cat(paste(strwrap(ref$Sources[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$Sources[1],              80), collapse="\n"))
 ```
 
     ## A. Guidelines for the Early Management of Patients With Acute Ischemic Stroke :
@@ -133,7 +131,7 @@ cat(paste(strwrap(ref$Sources[1], 80), collapse="\n"))
     ## reference for recommendations I and J
 
 ``` r
-cat(paste(strwrap(ref$References[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$References[1],           80), collapse="\n"))
 ```
 
     ## (UEA authors in bold) 1. Potter JF, Mistri A, Brodie F, Chernova J, Wilson E,
@@ -162,7 +160,7 @@ cat(paste(strwrap(ref$References[1], 80), collapse="\n"))
     ## funding and was responsible for the overall running, analysis and writing-up.
 
 ``` r
-cat(paste(strwrap(ref$ImpactSummary[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$ImpactSummary[1],        80), collapse="\n"))
 ```
 
     ## Two multicentre clinical trials conducted by Professor Potter have contributed
@@ -178,7 +176,7 @@ cat(paste(strwrap(ref$ImpactSummary[1], 80), collapse="\n"))
     ## thereby promoting better patient care and improved outcomes.
 
 ``` r
-cat(paste(strwrap(ref$ImpactDetails[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$ImpactDetails[1],        80), collapse="\n"))
 ```
 
     ## Each year, in England alone, approximately 152,000 people suffer a stroke. In
@@ -244,9 +242,9 @@ Exploration
 The **unnest\_tokens()** function from the **tidytext** package is used to reshape the data into "tidy" format, which allows simple analysis using packages like **dplyr** and **ggplot2**.
 
 ``` r
-tidy_ref <- unnest_tokens(tbl = ref, 
+tidy_ref <- unnest_tokens(tbl    = ref, 
                           output = word, 
-                          input = ImpactDetails)
+                          input  = ImpactDetails)
 ```
 
 It makes sense to remove stop words (common words like "a", "the", "is", etc) so that they don't swamp the analysis.

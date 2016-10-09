@@ -10,7 +10,6 @@ locally to allow for faster access._
 
 ## Preparation
 
-This analysis requires the **dplyr**, **tidytext** and **ggplot2** packages.
 ```{r, message=FALSE}
 library(dplyr)
 library(tidytext)
@@ -28,29 +27,29 @@ the data. Firstly we will load it into memory and clean it up a little.
 ```{r}
 ref <- readRDS("~/ref_data.rds")
 ref$Title <- 
-  str_replace_all(ref$Title, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$Title,                pattern = "[\\s]+", replace = " ")
 ref$UnderpinningResearch <- 
   str_replace_all(ref$UnderpinningResearch, pattern = "[\\s]+", replace = " ")
 ref$Sources <- 
-  str_replace_all(ref$Sources, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$Sources,              pattern = "[\\s]+", replace = " ")
 ref$References <- 
-  str_replace_all(ref$References, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$References,           pattern = "[\\s]+", replace = " ")
 ref$ImpactSummary <- 
-  str_replace_all(ref$ImpactSummary, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$ImpactSummary,        pattern = "[\\s]+", replace = " ")
 ref$ImpactDetails <- 
-  str_replace_all(ref$ImpactDetails, pattern = "[\\s]+", replace = " ")
+  str_replace_all(ref$ImpactDetails,        pattern = "[\\s]+", replace = " ")
 ```
 
 There is a bunch of metadata to look at, but we're really interested in the 
 text. There are multiple pieces of text in each record:
 
 ```{r}
-cat(paste(strwrap(ref$Title[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$Title[1],                80), collapse="\n"))
 cat(paste(strwrap(ref$UnderpinningResearch[1], 80), collapse="\n"))
-cat(paste(strwrap(ref$Sources[1], 80), collapse="\n"))
-cat(paste(strwrap(ref$References[1], 80), collapse="\n"))
-cat(paste(strwrap(ref$ImpactSummary[1], 80), collapse="\n"))
-cat(paste(strwrap(ref$ImpactDetails[1], 80), collapse="\n"))
+cat(paste(strwrap(ref$Sources[1],              80), collapse="\n"))
+cat(paste(strwrap(ref$References[1],           80), collapse="\n"))
+cat(paste(strwrap(ref$ImpactSummary[1],        80), collapse="\n"))
+cat(paste(strwrap(ref$ImpactDetails[1],        80), collapse="\n"))
 ```
 
 There is a lot of information here, and a lot of future analysis for other iLab
@@ -64,9 +63,9 @@ reshape the data into "tidy" format, which allows simple analysis using packages
 like **dplyr** and **ggplot2**.
 
 ```{r}
-tidy_ref <- unnest_tokens(tbl = ref, 
+tidy_ref <- unnest_tokens(tbl    = ref, 
                           output = word, 
-                          input = ImpactDetails)
+                          input  = ImpactDetails)
 ```
 
 It makes sense to remove stop words (common words like "a", "the", "is", etc) so 
