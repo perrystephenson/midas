@@ -37,7 +37,7 @@ There are lots of text mining tasks that you might want to perform in R, and kno
 | Word Association                | text2vec | GloVe algorithm            |
 | Latent Semantic Analysis (LSA)  | text2vec |                            |  
 | Latent Dirichlet Analysis (LDA) | text2vec |                            |  
-| Text Clustering                 | k-means  | (or hierarchical)          |  
+| Text Clustering                 | -        | Many options, none perfect |  
 | Text Categorisation             | caret    | (following vectorisation)  |  
 | Sentiment Analysis              | coreNLP  | (via tidytext)             |  
 | Opinion Mining                  | -        | -                          |  
