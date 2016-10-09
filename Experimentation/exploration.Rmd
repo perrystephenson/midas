@@ -1,0 +1,89 @@
+---
+title: "UK REF Impact Case Studies - Exploration"
+author: "Perry Stephenson"
+date: "09/10/2016"
+output: html_document
+---
+  
+_This script explores the UK REF Impact Case Studies dataset. The dataset was 
+previously extracted from <http://impact.ref.ac.uk/CaseStudies/> using the 
+**refimpact** package, which was developed as part of this iLab project._
+
+## Preparation
+
+This analysis requires the **dplyr**, **tidytext** and **ggplot2** packages.
+```{r, message=FALSE}
+library(dplyr)
+library(tidytext)
+library(ggplot2)
+```
+
+## Exploration
+
+The data was previously extracted and saved locally. The **unnest_tokens()** 
+function from the **tidytext** package is used to reshape the data into "tidy" 
+format, which allows simple analysis using packages like **dplyr** and 
+**ggplot2**.
+
+```{r}
+ref <- readRDS("~/ref_data.rds")
+tidy_ref <- unnest_tokens(tbl = ref, 
+                          output = word, 
+                          input = ImpactDetails)
+```
+
+It makes sense to remove stop words (common words like "a", "the", "is", etc) so 
+that they don't swamp the analysis.
+
+```{r, message=FALSE}
+data("stop_words")
+tidy_ref <- anti_join(tidy_ref, stop_words)
+```
+
+We can now make a count of the most frequent words in the dataset.
+
+```{r}
+count(tidy_ref, word, sort = TRUE) 
+```
+
+The results are entirely unsurprising! We can drill down further by using 
+positive and negative sentiment labels; the example below uses the Canadian 
+National Research Council (NRC) crowdsourced lexicon, obtained through the 
+**tidytext** package.
+
+```{r, message=FALSE}
+# Positive sentiment
+nrcpos <- filter(sentiments, lexicon == "nrc", sentiment == "positive")
+tidy_ref %>%
+  semi_join(nrcpos) %>%
+  count(word, sort = TRUE)
+
+# Negative sentiment
+nrcneg <- filter(sentiments, lexicon == "nrc", sentiment == "negative")
+tidy_ref %>%
+  semi_join(nrcneg) %>%
+  count(word, sort = TRUE)
+```
+
+We can also look at which words are contributing most strongly to sentiment. 
+This will use Bing Liu's lexicon (University of Illinois at Chicago) to score
+words as positive or negative, and then select the most frequently appearing 
+words for plotting.
+
+```{r, message=FALSE, warning=FALSE}
+bing <- filter(sentiments, lexicon == "bing") %>% select(-score)
+bing_word_counts <- tidy_ref %>%
+  inner_join(bing) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  ungroup()
+
+# Plot sentiment word importance
+bing_word_counts %>%
+  filter(n > 1000) %>%
+  mutate(n = ifelse(sentiment == "negative", -n, n)) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n, fill = sentiment)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ylab("Contribution to sentiment")
+```
