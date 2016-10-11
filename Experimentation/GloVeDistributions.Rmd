@@ -1,0 +1,172 @@
+---
+title: "Proof of Concept - GloVe Distributions"
+output: github_document
+---
+  
+This script aims to prove the following concepts:
+
+* The average GloVe position of words in a sentence is a meaningful way of 
+representing the topic, theme or meaning of the sentence.
+* The distribution of these sentence-based GloVe positions can be approximated
+by a standard statistical distribution, and similar impact case studies should
+have significant overlap in their distributions.
+* Individual sentences which are outliers from the overall distribution can be
+identified programmatically.
+
+## Packages Required
+
+This script will use **text2vec** for the GloVe algorithm, **tibble** for use of
+the data_frame, **stringr** for string operations, **tidytext** for managing 
+the dataset, and **ggplot2** for plotting.
+
+```{r setup, message=FALSE}
+library(text2vec)
+library(stringr)
+library(tibble)
+library(tidytext)
+library(ggplot2)
+```
+
+## Data Import and Tidy Text
+
+The data has been downloaded previously using the **refimpact** package, and has
+been saved locally to speed up analysis. The `unnest_tokens()` function from
+the **tidytext** package is used to clean up the text and break it into 
+sentences.
+
+```{r import}
+ref <- readRDS("~/ref_data.rds")
+ref <- ref[,c("CaseStudyId", "UOA", "ImpactType",
+              "Institution", "Title", "ImpactDetails")]
+tidy_ref <- unnest_tokens(ref, text, ImpactDetails, "sentences")
+glimpse(tidy_ref)
+```
+
+## GloVe
+
+GloVe is effectively a dimensionality reduction technique for bag-of-words text
+representation, where each word is mapped into a position in m-dimensional space
+based on its observed context in the corpus. Due to the importance of context,
+it needs to be trained on the original unbroken impact studies rather than the
+tidy text (which has been broken into sentences).
+
+For the initial investigation of the nature of the distributions generated, the
+GloVe model will only use 2 dimensions. For the final model the number of 
+dimensions will likely be 50.
+
+```{r glove-2d, message=FALSE}
+prepare_text <- function(x) {
+  x %>% 
+  str_to_lower %>% 
+  str_replace_all("[^[:alnum:]]", " ") %>% 
+  str_replace_all("\\s+", " ")
+}
+
+glove_input <- prepare_text(ref$ImpactDetails)
+tokens <- space_tokenizer(glove_input)
+it <- itoken(tokens)
+vocab <- create_vocabulary(it)
+vocab <- prune_vocabulary(vocab, term_count_min = 5L)
+vectorizer <- vocab_vectorizer(vocab, grow_dtm = FALSE, skip_grams_window = 5L)
+tcm <- create_tcm(it, vectorizer)
+
+glove <- GlobalVectors$new(word_vectors_size = 2,
+                           vocabulary = vocab,
+                           x_max = 10L,
+                           #lambda = 1e-5,
+                           shuffle=T)
+glove$fit(tcm, n_iter = 50)
+
+word_vectors <- glove$get_word_vectors()
+```
+
+This GloVe model has now mapped each word from the corpus into a two dimensional
+space where (in practice) related words are grouped together and the vector 
+differences between points have meaning. The standard results published in the
+**word2vec** and **GloVe** papers are:
+
+* king - man + woman = queen
+* berlin - germany + italy = rome
+
+We can take a look at some of these mappings by inspecting the word_vectors 
+data frame.
+
+```{r inspect}
+word_vectors[c("cat", "dog", "research", "impact"),]
+```
+
+We can also look at how these words are distributed across the two dimensional
+space.
+
+```{r plot-2d}
+words <- as.data.frame(word_vectors)
+names(words) <- c("dim_1", "dim_2")
+ggplot(words) +
+  geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
+  geom_density2d(aes(x=dim_1, y=dim_2))
+```
+
+This is good! They sort of resemble a normal distribution with a bit of noise, 
+and this may well improve as the dimensionality of the GloVe model increases. 
+But why assume? We can test this by fitting a 50 dimensional GloVe model and
+then plotting any two dimensions (noting that all dimensions are equally
+important in GloVe, unlike other dimensionality reduction techniques like PCA).
+
+```{r glove-50d, message=FALSE}
+glove2 <- GlobalVectors$new(word_vectors_size = 50,
+                           vocabulary = vocab,
+                           x_max = 10L,
+                           #lambda = 1e-5,
+                           shuffle=T)
+glove2$fit(tcm, n_iter = 50)
+
+word_vectors2 <- glove2$get_word_vectors()
+words2 <- as.data.frame(word_vectors2[,c(1,2)])
+names(words2) <- c("dim_1", "dim_2")
+ggplot(words2) +
+  geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
+  geom_density2d(aes(x=dim_1, y=dim_2))
+```
+
+This looks like the assumption of multivariate normality might be okay! Woohoo! 
+While we're here we might as well test it formally using the **MVN** package.
+The package doesn't seem to deal so well with large datasets, so we'll test
+normality with a sample.
+
+```{r multi-normality}
+library(MVN)
+mardiaTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
+hzTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
+roystonTest(word_vectors2[sample(1:nrow(word_vectors2), 2000),])
+```
+
+These are all pretty resounding "no" results from the formal tests, however it 
+is quite hard to find a large, 50-dimensional dataset for which the multivariate
+normality assumption holds. The important thing is that we can use the 
+almost-multivariate-normal assumption to find outliers, but this won't be 
+necessary until we're looking at whole sentences.
+
+Before we move on, we might as well check that similar words are near each 
+other, and different words are far apart. We can do this visually using the 
+2 dimensional GloVe model.
+
+```{r check-1}
+word_vectors[c("kidney", "liver", "institute", "university"),]
+```
+
+It looks like it works pretty well, even in 2 dimensions! To be extra certain
+we can look at the euclidian distances between the words in the 50 dimensional
+GloVe model.
+
+```{r check-2}
+dist(word_vectors2[c("kidney", "liver", "institute", "university"),],
+     method = "euclidian")
+```
+
+This is as expected - kidney and liver are the closest two words, then 
+institute and university are the next closest pairing. The 50-dimensonal 
+representation is doing a reasonable job of separating out the words.
+
+## GloVe Representation of Sentences
+
+To be continued...
