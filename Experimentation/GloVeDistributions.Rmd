@@ -63,7 +63,7 @@ prepare_text <- function(x) {
 }
 
 glove_input <- prepare_text(ref$ImpactDetails)
-tokens <- space_tokenizer(glove_input)
+tokens <- word_tokenizer(glove_input)
 it <- itoken(tokens)
 vocab <- create_vocabulary(it)
 vocab <- prune_vocabulary(vocab, term_count_min = 5L)
@@ -116,7 +116,7 @@ important in GloVe, unlike other dimensionality reduction techniques like PCA).
 glove2 <- GlobalVectors$new(word_vectors_size = 50,
                            vocabulary = vocab,
                            x_max = 10L,
-                           #lambda = 1e-5,
+                           lambda = 1e-5,
                            shuffle=T)
 glove2$fit(tcm, n_iter = 50)
 
@@ -151,22 +151,127 @@ other, and different words are far apart. We can do this visually using the
 2 dimensional GloVe model.
 
 ```{r check-1}
-word_vectors[c("kidney", "liver", "institute", "university"),]
+word_vectors[c("kidney", "bladder", "institute", "university"),]
 ```
 
 It looks like it works pretty well, even in 2 dimensions! To be extra certain
-we can look at the euclidian distances between the words in the 50 dimensional
-GloVe model.
+we can look at similar words in the 50 dimensional GloVe model.
 
 ```{r check-2}
-dist(word_vectors2[c("kidney", "liver", "institute", "university"),],
-     method = "euclidian")
+get_nearest <- function(x) {
+  sim2(x = word_vectors2, y = word_vectors2[x,,drop=F], 
+       method = "cosine", norm = "l2")[,1] %>% 
+    sort(decreasing = TRUE) %>% head(5)
+}
+get_nearest("kidney")
+get_nearest("bladder")
+get_nearest("institute")
+get_nearest("university")
 ```
 
-This is as expected - kidney and liver are the closest two words, then 
-institute and university are the next closest pairing. The 50-dimensonal 
-representation is doing a reasonable job of separating out the words.
+This is looking promising - similar words are near each other in the 50D 
+representation, which suggests it is doing a reasonable job of separating out 
+the words.
+
+The final thing we can do to assess the GloVe representation is to test the word
+relationships using a standard test set. This is unlikely to perform very well
+on this dataset as it is quite specific, however it should provide a reasonable
+basis for comparison when tuning the GloVe model later in the project.
+
+```{r}
+questions_file <- '~/impactface/Data/questions-words.txt'
+qlst <- prepare_analogy_questions(questions_file,
+                                  rownames(word_vectors2),
+                                  verbose = T)
+res <- check_analogy_accuracy(questions_list = qlst, 
+                              m_word_vectors = word_vectors2,
+                              verbose = T)
+```
+
+The overall accuracy isn't hugely important in this context, and it will be 
+improved upon when the model is tuned.
 
 ## GloVe Representation of Sentences
 
-To be continued...
+There is currently no universally accepted method for combining GloVe (or
+word2vec) vectors into sentences. Some approaches involve training a new model
+to look at sentence context, however this requires significantly more training
+data than I have access to. Other approaches include either:
+
+1. taking the average vector for each of the words in the sentence, or
+1. applying the tf-idf weighted average vector for each of the words in the 
+sentence. 
+
+Given that the second option should up-weight important words and down-weight 
+unimportant words, it seems like a good option. We can implement this by 
+constructing a document-term matrix (DTM) and then multiplying the matrices 
+together.
+
+```{r}
+tokens <- word_tokenizer(tidy_ref$text)
+it <- itoken(tokens)
+# use vocab from last GloVe model
+vectorizer <- vocab_vectorizer(vocab)
+dtm <- create_dtm(it, vectorizer)
+tfidf <- TfIdf$new()
+dtm_tfidf <- fit_transform(dtm, tfidf)
+sentence_vectors <- dtm_tfidf %*% word_vectors2
+```
+
+I have to admit I'm a little surprised that worked; I was expecting that step to
+be a lot harder! The next step is to revisit the multivariate normality 
+assumption with this new data. There is a heap more of it (as there are more
+sentences in the corpus than words in the vocabulary) so the formal tests will
+definitely not be satisfied, but **ggplot2** should still be able to handle the
+full dataset.
+
+```{r}
+sen_plot <- as.data.frame(as.matrix(sentence_vectors[,c(1,2,25,50)]))
+names(sen_plot) <- c("dim_1", "dim_2", "dim_25", "dim_50")
+ggplot(sen_plot) +
+  geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
+  geom_density2d(aes(x=dim_1, y=dim_2))
+ggplot(sen_plot) +
+  geom_point(aes(x=dim_25, y=dim_50), alpha = 0.05) +
+  geom_density2d(aes(x=dim_25, y=dim_50))
+```
+
+These plots look close enough to multvariate normal for the purpose of this
+project, so I think we can call that a win for now. The next thing to do is 
+check whether the position of these sentences in the GloVe vector space has any
+meaning. First we need to set up the similarity function, which will give (in 
+order):
+
+1. the sentence being compared
+1. the nearest sentence
+1. the second-nearest sentence
+1. the furthest sentence
+1. the second-furthest sentence
+
+```{r}
+dimnames(sentence_vectors) <- 
+  list(str_replace_all(tidy_ref$text,"\\s+", " ") , NULL)
+get_nearest_and_farthest <- function(x, vecs) {
+  vecs <- as.matrix(vecs)
+  sim_vec <- sim2(x = vecs, y = vecs[x,,drop=F], 
+                  method = "cosine", norm = "l2")[,1] %>% 
+               sort(decreasing = TRUE)
+  out <- c(head(sim_vec,3),tail(sim_vec,2))
+  out
+}
+```
+
+We can now see if similar sentences are being discovered by the model - here 
+goes nothing!
+
+```{r}
+get_nearest_and_farthest(1, sentence_vectors)
+get_nearest_and_farthest(1234, sentence_vectors)
+get_nearest_and_farthest(5678, sentence_vectors)
+get_nearest_and_farthest(9999, sentence_vectors)
+```
+
+I don't want to get too carried away here, but it looks like it's working! The
+first three sentences in each comparison are similar, and the last two are very
+dissimilar! I'm going to claim that as a win for now, and I'm comfortable that 
+the first assumption under test in this script is viable.
