@@ -5,12 +5,12 @@ output: github_document
   
 This script aims to prove the following concepts:
 
-* The average GloVe position of words in a sentence is a meaningful way of 
+1. The average GloVe position of words in a sentence is a meaningful way of 
 representing the topic, theme or meaning of the sentence.
-* The distribution of these sentence-based GloVe positions can be approximated
+1. The distribution of these sentence-based GloVe positions can be approximated
 by a standard statistical distribution, and similar impact case studies should
 have significant overlap in their distributions.
-* Individual sentences which are outliers from the overall distribution can be
+1. Individual sentences which are outliers from the overall distribution can be
 identified programmatically.
 
 ## Packages Required
@@ -275,3 +275,102 @@ I don't want to get too carried away here, but it looks like it's working! The
 first three sentences in each comparison are similar, and the last two are very
 dissimilar! I'm going to claim that as a win for now, and I'm comfortable that 
 the first assumption under test in this script is viable.
+
+## Document distributions
+
+To save you scrolling all the way back to the top of the document, the second 
+assumption I want to test is:
+
+> The distribution of these sentence-based GloVe positions can be approximated
+> by a standard statistical distribution, and similar impact case studies should
+> have significant overlap in their distributions.
+
+We might start again with the 2D GloVe model so that we can visualise all of the
+dimensions. We will select two documents from different fields and compare their
+distributions.
+
+```{r}
+sentence_vectors_2d <- dtm_tfidf %*% word_vectors
+sentence_test <- data.frame(
+  row_num = which(tidy_ref$CaseStudyId %in% c(100,1004)),
+  type = tidy_ref$ImpactType[which(tidy_ref$CaseStudyId %in% c(100,1004))]
+)
+sentence_test <- cbind(
+  sentence_test,
+  sentence_vectors_2d[sentence_test$row_num,1],
+  sentence_vectors_2d[sentence_test$row_num,2]
+)
+names(sentence_test)[3:4] <- c("dim_1","dim_2")
+ggplot(sentence_test) +
+  geom_point(aes(x=dim_1, y=dim_2, col=type)) +
+  geom_density2d(aes(x=dim_1, y=dim_2, col=type))
+```
+
+Both documents are quite widely spread out throughout the GloVe space, which 
+isn't giving me a lot of hope that the assumption being tested will be viable, 
+but we will press on! Before we move on, let's see if there is anything
+interesting about the different ImpactType values overall.
+
+```{r}
+sentence_test <- data.frame(
+  type = tidy_ref$ImpactType,
+  dim_1 = sentence_vectors_2d[,1],
+  dim_2 = sentence_vectors_2d[,2]
+)
+ggplot(sentence_test) +
+  geom_density2d(aes(x=dim_1, y=dim_2, col=type))
+```
+
+Nope. 
+
+Let's put that one aside for now and say that the distributions might be useful
+for finding outliers, but that they're not going to say anything about the
+overall topic of the document. If there is a silver lining to this, it is the
+fact this puts the analysis firmly back in "unsupervised learning" territory 
+which means it's going to generalise really well to new domains! You have to 
+take the small wins where you can get them...
+
+## Programmatic Identification of Outliers
+
+Again, to save you scrolling back to the top, this analysis is intended to 
+prove:
+
+> Individual sentences which are outliers from the overall distribution can be
+> identified programmatically.
+
+There are three ways to approach this:
+
+1. Find outliers from the distribution of sentences within the document
+1. Find outliers from the distribution of sentences within documents in the same
+category
+1. Find outliers from the distribution of sentences within all documents
+
+Thinking about this from the user's perspective, you would be most interested in
+the third point (this sentence does not fit within the corpus at all), then the
+second point (this sentence does not fit within this category), then finally the
+first point (this sentence might not fit with the rest of the sentences in your
+draft document). With this in mind I think it makes sense to consider outliers 
+at all three levels, and present them to the user in that order.
+
+The analysis below will look at a single test document, "Visual Field Defects 
+and their Rehabilitation" from Durham University. The full text of the Impact 
+Details section of their submission is included below for reference, broken down
+into sentences for later reference.
+
+```{r}
+str_replace_all(tidy_ref$text[which(tidy_ref$CaseStudyId == 11764)],"\\s+", " ")
+```
+
+It is immediately clear that sentence 29 has been incorrectly identified, as it
+logically belongs to the end of sentence 28. We will keep and eye on it for now,
+and remove it later if needed (sentence parsing is not a key objective for this 
+iLab, and it can likely be resolved using a different tokenizer).
+
+We need to build a data frame for each of the sentences, with the 50-dimensional
+GloVe vectors for every sentence.
+
+```{r}
+durham <- sentence_vectors[which(tidy_ref$CaseStudyId == 11764),] %>% 
+  as.matrix() %>% 
+  as.data.frame()
+```
