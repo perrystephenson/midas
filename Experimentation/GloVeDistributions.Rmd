@@ -374,3 +374,60 @@ durham <- sentence_vectors[which(tidy_ref$CaseStudyId == 11764),] %>%
   as.matrix() %>% 
   as.data.frame()
 ```
+
+Unfortunately the standard MVN outlier tests do not work for individual 
+documents as there are more dimensions than there are sentences, however we can 
+still use distance measures to identify potential outliers. For now we will just
+look at the first two dimensions graphically, and then use numeric comparisons 
+to extend the analysis to 50 dimensions.
+
+```{r}
+durham$sentence_num <- paste0("X",1:nrow(durham))
+ggplot(durham) +
+  geom_point(aes(x=V1, y=V2)) +
+  geom_text(aes(x=V1, y=V2, label = sentence_num), nudge_x = 0.2) +
+  scale_x_continuous(expand = c(0.1,0.1))
+```
+
+This looks promising! X29 (the 29th sentence) rightly appears as an outlier in 
+the first two dimensions, as does X14 (the 14th sentence) and potentially X9, 
+X12 and X13. We can look at each of the original sentences below:
+
+```{r}
+durham_raw <- 
+  str_replace_all(tidy_ref$text[which(tidy_ref$CaseStudyId == 11764)],"\\s+", " ")
+durham_raw[29] # the sentence that doesn't have any words
+durham_raw[14]
+durham_raw[9]
+durham_raw[12]
+durham_raw[13]
+```
+
+Looking at these in detail, it looks like several of them are quotes or 
+testimonials, which makes sense as they are written from a different perspective
+and use different language. We shouldn't get too carried away though, let's take
+a look at distances in all 50 dimensions, and look at the 5 "least similar" 
+sentences.
+
+```{r}
+average_sentence <- colMeans(durham[,1:50])
+sim2(x = as.matrix(durham[,1:50]), y = t(as.matrix(average_sentence)), 
+     method = "cosine", norm = "l2")[,1] %>% 
+  sort(decreasing = TRUE) %>% tail(5)
+```
+
+These sentences include two quotes, a sentence of non-word symbols, and then two
+other "outlier" sentences. This looks promising!
+
+Going to the other extreme, we can find outliers from the entire corpus, and
+identify whether any of those are part of the document being assessed. Let's 
+start by looking at the biggest outliers overall.
+
+```{r}
+average_sentence <- colMeans(as.matrix(sentence_vectors))
+sim2(x = as.matrix(sentence_vectors), y = t(as.matrix(average_sentence)), 
+     method = "cosine", norm = "l2")[,1] %>% 
+  sort(decreasing = TRUE) %>% tail(5)
+```
+
+These are definitely bad sentences! 

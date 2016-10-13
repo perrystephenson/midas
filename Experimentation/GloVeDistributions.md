@@ -87,10 +87,10 @@ word_vectors[c("cat", "dog", "research", "impact"),]
 ```
 
     ##                [,1]       [,2]
-    ## cat      -0.2120372 -0.1682826
-    ## dog      -0.4403001 -0.4487575
-    ## research  3.6708916  2.5611910
-    ## impact    3.0229723  2.9584991
+    ## cat      0.01735823 -0.4029906
+    ## dog      0.13628136 -0.9495724
+    ## research 2.70046246  3.6300607
+    ## impact   3.13069940  2.8159776
 
 We can also look at how these words are distributed across the two dimensional space.
 
@@ -140,15 +140,15 @@ mardiaTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
     ## --------------------------------------- 
     ##    data : word_vectors2[sample(1:nrow(word_vectors2), 5000), ] 
     ## 
-    ##    g1p            : 46.48168 
-    ##    chi.skew       : 38734.73 
+    ##    g1p            : 47.11102 
+    ##    chi.skew       : 39259.18 
     ##    p.value.skew   : 0 
     ## 
-    ##    g2p            : 2702.708 
-    ##    z.kurtosis     : 50.35668 
+    ##    g2p            : 2707.151 
+    ##    z.kurtosis     : 52.53521 
     ##    p.value.kurt   : 0 
     ## 
-    ##    chi.small.skew : 38758.88 
+    ##    chi.small.skew : 39283.66 
     ##    p.value.small  : 0 
     ## 
     ##    Result          : Data are not multivariate normal. 
@@ -162,7 +162,7 @@ hzTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
     ## --------------------------------------------- 
     ##   data : word_vectors2[sample(1:nrow(word_vectors2), 5000), ] 
     ## 
-    ##   HZ      : 1.000453 
+    ##   HZ      : 1.000202 
     ##   p-value : 0 
     ## 
     ##   Result  : Data are not multivariate normal. 
@@ -176,8 +176,8 @@ roystonTest(word_vectors2[sample(1:nrow(word_vectors2), 2000),])
     ## --------------------------------------------- 
     ##   data : word_vectors2[sample(1:nrow(word_vectors2), 2000), ] 
     ## 
-    ##   H       : 152.086 
-    ##   p-value : 3.080538e-12 
+    ##   H       : 162.6471 
+    ##   p-value : 7.635894e-14 
     ## 
     ##   Result  : Data are not multivariate normal. 
     ## ---------------------------------------------
@@ -190,11 +190,11 @@ Before we move on, we might as well check that similar words are near each other
 word_vectors[c("kidney", "bladder", "institute", "university"),]
 ```
 
-    ##                   [,1]       [,2]
-    ## kidney      0.02697178 -0.7086117
-    ## bladder    -0.44632564 -0.9706518
-    ## institute   2.45611095 -0.6736502
-    ## university  3.48836768 -0.4219434
+    ##                  [,1]       [,2]
+    ## kidney     0.57540366 -0.9746883
+    ## bladder    0.19040459 -1.3997446
+    ## institute  0.58163974  1.4106487
+    ## university 0.02619392  3.3428206
 
 It looks like it works pretty well, even in 2 dimensions! To be extra certain we can look at similar words in the 50 dimensional GloVe model.
 
@@ -207,29 +207,29 @@ get_nearest <- function(x) {
 get_nearest("kidney")
 ```
 
-    ##      kidney  transplant respiratory     chronic populations 
-    ##   1.0000000   0.6414065   0.6280148   0.6262203   0.5759843
+    ##     kidney transplant    chronic  pregnancy   corridor 
+    ##  1.0000000  0.6665933  0.6455455  0.5637431  0.5625042
 
 ``` r
 get_nearest("bladder")
 ```
 
-    ##   bladder    rectal     colon  invasive    penile 
-    ## 1.0000000 0.6095564 0.6058688 0.5802685 0.5690558
+    ##       bladder          lung        rectal neuromuscular      ancestry 
+    ##     1.0000000     0.6401507     0.5977973     0.5875259     0.5865934
 
 ``` r
 get_nearest("institute")
 ```
 
-    ##   institute association  australian     academy  foundation 
-    ##   1.0000000   0.6167790   0.6124357   0.5966237   0.5959347
+    ##  institute    british    academy australian     centre 
+    ##  1.0000000  0.6509103  0.6023490  0.6019490  0.5979515
 
 ``` r
 get_nearest("university")
 ```
 
-    ## university  cambridge     oxford    bristol      leeds 
-    ##  1.0000000  0.7610587  0.7569901  0.7462350  0.7305951
+    ## university     oxford    glasgow  cambridge    bristol 
+    ##  1.0000000  0.7678074  0.7548113  0.7354686  0.7171991
 
 This is looking promising - similar words are near each other in the 50D representation, which suggests it is doing a reasonable job of separating out the words.
 
@@ -242,7 +242,7 @@ qlst <- prepare_analogy_questions(questions_file,
                                   verbose = T)
 ```
 
-    ## 2016-10-13 00:28:13 -  9018 full questions found out of 19544 total
+    ## 2016-10-13 14:32:35 -  9018 full questions found out of 19544 total
 
 ``` r
 res <- check_analogy_accuracy(questions_list = qlst, 
@@ -250,35 +250,35 @@ res <- check_analogy_accuracy(questions_list = qlst,
                               verbose = T)
 ```
 
-    ## 2016-10-13 00:28:14 - capital-common-countries: correct 51 out of 506, accuracy = 0.1008
+    ## 2016-10-13 14:32:37 - capital-common-countries: correct 61 out of 506, accuracy = 0.1206
 
-    ## 2016-10-13 00:28:17 - capital-world: correct 79 out of 1638, accuracy = 0.0482
+    ## 2016-10-13 14:32:40 - capital-world: correct 66 out of 1638, accuracy = 0.0403
 
-    ## 2016-10-13 00:28:17 - currency: correct 0 out of 40, accuracy = 0.0000
+    ## 2016-10-13 14:32:40 - currency: correct 0 out of 40, accuracy = 0.0000
 
-    ## 2016-10-13 00:28:18 - city-in-state: correct 9 out of 449, accuracy = 0.0200
+    ## 2016-10-13 14:32:41 - city-in-state: correct 7 out of 449, accuracy = 0.0156
 
-    ## 2016-10-13 00:28:18 - family: correct 24 out of 182, accuracy = 0.1319
+    ## 2016-10-13 14:32:41 - family: correct 22 out of 182, accuracy = 0.1209
 
-    ## 2016-10-13 00:28:19 - gram1-adjective-to-adverb: correct 5 out of 506, accuracy = 0.0099
+    ## 2016-10-13 14:32:42 - gram1-adjective-to-adverb: correct 3 out of 506, accuracy = 0.0059
 
-    ## 2016-10-13 00:28:19 - gram2-opposite: correct 1 out of 240, accuracy = 0.0042
+    ## 2016-10-13 14:32:42 - gram2-opposite: correct 0 out of 240, accuracy = 0.0000
 
-    ## 2016-10-13 00:28:21 - gram3-comparative: correct 86 out of 930, accuracy = 0.0925
+    ## 2016-10-13 14:32:44 - gram3-comparative: correct 72 out of 930, accuracy = 0.0774
 
-    ## 2016-10-13 00:28:22 - gram4-superlative: correct 7 out of 210, accuracy = 0.0333
+    ## 2016-10-13 14:32:44 - gram4-superlative: correct 9 out of 210, accuracy = 0.0429
 
-    ## 2016-10-13 00:28:23 - gram5-present-participle: correct 47 out of 870, accuracy = 0.0540
+    ## 2016-10-13 14:32:46 - gram5-present-participle: correct 45 out of 870, accuracy = 0.0517
 
-    ## 2016-10-13 00:28:26 - gram6-nationality-adjective: correct 71 out of 1299, accuracy = 0.0547
+    ## 2016-10-13 14:32:48 - gram6-nationality-adjective: correct 53 out of 1299, accuracy = 0.0408
 
-    ## 2016-10-13 00:28:28 - gram7-past-tense: correct 66 out of 992, accuracy = 0.0665
+    ## 2016-10-13 14:32:50 - gram7-past-tense: correct 78 out of 992, accuracy = 0.0786
 
-    ## 2016-10-13 00:28:29 - gram8-plural: correct 4 out of 650, accuracy = 0.0062
+    ## 2016-10-13 14:32:51 - gram8-plural: correct 3 out of 650, accuracy = 0.0046
 
-    ## 2016-10-13 00:28:30 - gram9-plural-verbs: correct 28 out of 506, accuracy = 0.0553
+    ## 2016-10-13 14:32:52 - gram9-plural-verbs: correct 36 out of 506, accuracy = 0.0711
 
-    ## 2016-10-13 00:28:30 - OVERALL ACCURACY = 0.0530
+    ## 2016-10-13 14:32:52 - OVERALL ACCURACY = 0.0505
 
 The overall accuracy isn't hugely important in this context, and it will be improved upon when the model is tuned.
 
@@ -350,61 +350,61 @@ We can now see if similar sentences are being discovered by the model - here goe
 get_nearest_and_farthest(1, sentence_vectors)
 ```
 
-    ##                                                                                                                                                                                                                                                                               the historical, cultural, methodological and ethical insights from the research and outputs have resulted in pioneering, wide-ranging and sustained impact from ntu's leading involvement and advisory role in a number of impactful projects in the documentation, management and renewal of built heritage in oman and the uae and its dissemination through public engagement. 
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       1.0000000 
-    ##                                                                                                                                                                                                                                                                                                                                                                                    by using these exhibitions as a platform for the dissemination of kent and desnoes' collaborative work, the impact from this project has enriched cultural awareness of local and global cultural heritage and has provided expert opinion on presenting this to the public. 
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       0.8997682 
-    ##                                                                                                                                                                                                                                                                                                                    (2) the exceptional impact of brennand-wood's work with regard to interdisciplinary practices on a diverse set of audiences through public engagement activities is evidenced through the large number of public and private commissions (17 since 1993) for which the coleston hall project is exemplary through its cross-over with music. 
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       0.8928349 
-    ## the rota season (attendance 3,272) (5.10) showcased sixteen movies with scores by rota, including visconti's white nights (1957), the leopard (1963) and rocco and his brothers (1960), fellini's i vitelloni (1953), la strada (1954), il bidone (1955), nights of cabiria (1956), la dolce vita (1960), eight and a half (1963) and amarcord (1973), as well as popular italian comedies (&#200; primavera (1949), anni facili (1953), a queer melodrama (amici per la pelle (1955)), a british (obsession (1949)) and a french (plein soleil (1959)) thriller, zeffirelli's the taming of the shrew (1966) and the blockbuster the godfather part ii (1974). 
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      -0.6070391 
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               figure courtesy of bfn and ospar. 
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      -0.6208839
+    ##                                                                                     the historical, cultural, methodological and ethical insights from the research and outputs have resulted in pioneering, wide-ranging and sustained impact from ntu's leading involvement and advisory role in a number of impactful projects in the documentation, management and renewal of built heritage in oman and the uae and its dissemination through public engagement. 
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                             1.0000000 
+    ##                                                                                                                                                             the significant impact of the research projects has been recognised in terms of the contribution to cultural enrichment, the discussion of sites of national heritage and engagement of public in moral and ethical issues arising from new scientific developments and the transparency of closed sites. 
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                             0.8987246 
+    ##                                                                                                                                                                                          by using these exhibitions as a platform for the dissemination of kent and desnoes' collaborative work, the impact from this project has enriched cultural awareness of local and global cultural heritage and has provided expert opinion on presenting this to the public. 
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                             0.8871750 
+    ## tesco british telecom waldner rhoss lennox fnac first facility siemens arcotel mcdonalds baxter schneider electric skanska socomec vodafone allianz johnson controls media markt eversheds metro ag cofely lg electronics marriott daikin honeywell spar best western nh hoteles unicredit carrier h&amp;m falkensteiner ibis hotels france air eurobank aldi relais &amp; chateaux mercure mitie toshiba ikea grupo inditex (zara, mango etc) swegon santander trane 
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                            -0.5652953 
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                     figure courtesy of bfn and ospar. 
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                            -0.5787604
 
 ``` r
 get_nearest_and_farthest(1234, sentence_vectors)
 ```
 
-    ##                                                                                                      policy the uk`s cabinet office, and office of the prime minister, invited varese to join the strategic review of serious organized crime, in 2009, because his work had come to the attention of the chairman of soca [section 5: c1]. 
-    ##                                                                                                                                                                                                                                                                                                                                   1.0000000 
-    ##                                                                                                                                                                                                                                            findings have been presented, by invitation, at the cabinet office, and the ministry of justice. 
-    ##                                                                                                                                                                                                                                                                                                                                   0.8658055 
-    ## a year later, michael mulqueen was invited to provide a confidential interim briefing on irish national security to the leader of the opposition, enda kenny td (currently taoiseach/prime minister), which fed, directly, into a number of questions pursued at leaders' questions in the d&#225;il (ireland's lower house of parliament). 
-    ##                                                                                                                                                                                                                                                                                                                                   0.8640205 
-    ##                                                                                                                                                         the technology features true wideband capabilities allowing simultaneous support for any wireless standard including 2g, 3g, 4g, lte, pmr/lmr, dvb-h, tetra, wi-fi, wimax and rfid. 
-    ##                                                                                                                                                                                                                                                                                                                                  -0.5605827 
-    ##                                                                                                                                                                                                                                       it's the perfect antidote to the vague vacuous nonsense crowding the shelves of self-help bookshops.' 
-    ##                                                                                                                                                                                                                                                                                                                                  -0.5825987
+    ##                                                                policy the uk`s cabinet office, and office of the prime minister, invited varese to join the strategic review of serious organized crime, in 2009, because his work had come to the attention of the chairman of soca [section 5: c1]. 
+    ##                                                                                                                                                                                                                                                                                             1.0000000 
+    ## in 2008, triggered by an article written with bechhofer for the 24th british social attitudes report (see section 3), mccrone was sought out, via a minister in the scottish government, by then prime minister gordon brown, who has a strong interest in questions of national identity in britain. 
+    ##                                                                                                                                                                                                                                                                                             0.8815716 
+    ##                                                                                      reading research has also fed into the commission on sustainable agriculture and climate change [b, cites 4], which was chaired by the uk's chief scientific adviser at the time, professor sir john beddington. 
+    ##                                                                                                                                                                                                                                                                                             0.8632888 
+    ##                                                                                                                                           here, the products target particularly aubergine, cucumber, melon, pepper, blueberry, raspberry, strawberry, tomato, cut flowers and ornamental pot plants. 
+    ##                                                                                                                                                                                                                                                                                            -0.5729760 
+    ##                                                                                                                   the technology features true wideband capabilities allowing simultaneous support for any wireless standard including 2g, 3g, 4g, lte, pmr/lmr, dvb-h, tetra, wi-fi, wimax and rfid. 
+    ##                                                                                                                                                                                                                                                                                            -0.5775073
 
 ``` r
 get_nearest_and_farthest(5678, sentence_vectors)
 ```
 
-    ##                                                                                         the two handbooks have had 2894 views since 2011. 
-    ##                                                                                                                                 1.0000000 
-    ## since publication on 15th july 2013, 120 books have already been sold and seven university courses have indicated it will be a core book. 
-    ##                                                                                                                                 0.7886740 
-    ##           prior to 2008, this resource consisted of material relating to six hundred poets; since july 2008, 1,060 poets have been added. 
-    ##                                                                                                                                 0.7814427 
-    ##                                                                                                                                   (imp4). 
-    ##                                                                                                                                -0.5110185 
-    ##                                                                    ibstock, uk; the sole brick factory, costa rica, petersens, dk) alike. 
-    ##                                                                                                                                -0.5250606
+    ##                                                                                             the two handbooks have had 2894 views since 2011. 
+    ##                                                                                                                                     1.0000000 
+    ##               over 200 ultra engineers, managers and directors have now received training, and 26 courses have been delivered since 2008 [a]. 
+    ##                                                                                                                                     0.7898779 
+    ##                                               this has been on sale since october 2009 and over 30 installations have been carried out [4.2]. 
+    ##                                                                                                                                     0.7843917 
+    ##                                                                        ibstock, uk; the sole brick factory, costa rica, petersens, dk) alike. 
+    ##                                                                                                                                    -0.5356279 
+    ## this csip-cefas underpinning research utilises a sentinel marine mammal apex predator - the uk-stranded harbour porpoise (phocoena phocoena). 
+    ##                                                                                                                                    -0.5464338
 
 ``` r
 get_nearest_and_farthest(9999, sentence_vectors)
 ```
 
-    ##                                                                                                            additionally, the changes have benefited patients who required fewer attendances and no splint in the majority of cases, without compromise to outcomes". 
-    ##                                                                                                                                                                                                                                                            1.0000000 
-    ##                                                                                                                                                             patients carrying the specific genetic markers had a higher remission compared to those who did not [f]. 
-    ##                                                                                                                                                                                                                                                            0.8019386 
-    ## additionally though, the majority of the nine patients who had received treatment by january 2013, some of whom had had considerable disability, showed reductions in neurological impairment and spasticity compared with their pre-treatment baseline performance. 
-    ##                                                                                                                                                                                                                                                            0.7662246 
-    ##                                                                                                      aissaoui presented a paper entitled "maghrebi cultural circles in metropolitan france 1934-1939" and miller presented a paper on "the maghrebi and comics" (h). 
-    ##                                                                                                                                                                                                                                                           -0.5184016 
-    ##                                                                                                                                                                                                       curated by susanna beaumont, charlotte jones, rebecca milling. 
-    ##                                                                                                                                                                                                                                                           -0.5226697
+    ##                                                                                                                                                   additionally, the changes have benefited patients who required fewer attendances and no splint in the majority of cases, without compromise to outcomes". 
+    ##                                                                                                                                                                                                                                                                                                   1.0000000 
+    ## at great ormond street hospital and uclh there are currently 21 children and adolescent patients being treated with tocilizumab who would otherwise have had active disease with its potential problems and most likely would have been on high dose steroids and suffering the complications of this also. 
+    ##                                                                                                                                                                                                                                                                                                   0.7730076 
+    ##                                                                                                                                           furthermore, they are at less risk of developing skin damage/ulceration that may themselves prolong hospital admission, estimated as 6000 fewer cases since 2009. 
+    ##                                                                                                                                                                                                                                                                                                   0.7589511 
+    ##                                                                                                                                             aissaoui presented a paper entitled "maghrebi cultural circles in metropolitan france 1934-1939" and miller presented a paper on "the maghrebi and comics" (h). 
+    ##                                                                                                                                                                                                                                                                                                  -0.4827796 
+    ##                                                                                                                                                                                                                                                                             sir tony hoare (microsoft) [e4] 
+    ##                                                                                                                                                                                                                                                                                                  -0.4848293
 
 I don't want to get too carried away here, but it looks like it's working! The first three sentences in each comparison are similar, and the last two are very dissimilar! I'm going to claim that as a win for now, and I'm comfortable that the first assumption under test in this script is viable.
 
@@ -514,3 +514,93 @@ durham <- sentence_vectors[which(tidy_ref$CaseStudyId == 11764),] %>%
   as.matrix() %>% 
   as.data.frame()
 ```
+
+Unfortunately the standard MVN outlier tests do not work for individual documents as there are more dimensions than there are sentences, however we can still use distance measures to identify potential outliers. For now we will just look at the first two dimensions graphically, and then use numeric comparisons to extend the analysis to 50 dimensions.
+
+``` r
+durham$sentence_num <- paste0("X",1:nrow(durham))
+ggplot(durham) +
+  geom_point(aes(x=V1, y=V2)) +
+  geom_text(aes(x=V1, y=V2, label = sentence_num), nudge_x = 0.2) +
+  scale_x_continuous(expand = c(0.1,0.1))
+```
+
+![](GloVeDistributions_files/figure-markdown_github/unnamed-chunk-10-1.png)
+
+This looks promising! X29 (the 29th sentence) rightly appears as an outlier in the first two dimensions, as does X14 (the 14th sentence) and potentially X9, X12 and X13. We can look at each of the original sentences below:
+
+``` r
+durham_raw <- 
+  str_replace_all(tidy_ref$text[which(tidy_ref$CaseStudyId == 11764)],"\\s+", " ")
+durham_raw[29] # the sentence that doesn't have any words
+```
+
+    ## [1] "[8]"
+
+``` r
+durham_raw[14]
+```
+
+    ## [1] "(ms) \"the research has helped me greatly, it has made me concentrate much more ..."
+
+``` r
+durham_raw[9]
+```
+
+    ## [1] "in the uk some 150 patients took part in the three clinical trials underpinning the research, benefitting from improvements in their self-confidence, independence, self-esteem and general comfort."
+
+``` r
+durham_raw[12]
+```
+
+    ## [1] "patient testimonials [5] include: \"i now find using a dictionary ... and the telephone directory much easier and also continue to enjoy my general reading, tapestry, and knitting, and i certainly pay more particular attention to my environment when i am out\"."
+
+``` r
+durham_raw[13]
+```
+
+    ## [1] "(mh) \"i went for a week on a canal boat last week so i was able to steer the boat and implement my new visual awareness skills\"."
+
+Looking at these in detail, it looks like several of them are quotes or testimonials, which makes sense as they are written from a different perspective and use different language. We shouldn't get too carried away though, let's take a look at distances in all 50 dimensions, and look at the 5 "least similar" sentences.
+
+``` r
+average_sentence <- colMeans(durham[,1:50])
+sim2(x = as.matrix(durham[,1:50]), y = t(as.matrix(average_sentence)), 
+     method = "cosine", norm = "l2")[,1] %>% 
+  sort(decreasing = TRUE) %>% tail(5)
+```
+
+    ##                                                                        i find i read a lot more now, because i find it easier and more comfortable". 
+    ##                                                                                                                                            0.6643481 
+    ## many patients restrict their activities, become withdrawn and dependent, and can suffer from depression as a consequence of their visual impairment. 
+    ##                                                                                                                                            0.6582623 
+    ##                     (mh) "i went for a week on a canal boat last week so i was able to steer the boat and implement my new visual awareness skills". 
+    ##                                                                                                                                            0.5343833 
+    ##                                                                                                                                                  [8] 
+    ##                                                                                                                                            0.5177477 
+    ##                           the team has worked with professionals from numerous specialities including neurosciences, ophthalmology and stroke units. 
+    ##                                                                                                                                            0.3893308
+
+These sentences include two quotes, a sentence of non-word symbols, and then two other "outlier" sentences. This looks promising!
+
+Going to the other extreme, we can find outliers from the entire corpus, and identify whether any of those are part of the document being assessed. Let's start by looking at the biggest outliers overall.
+
+``` r
+average_sentence <- colMeans(as.matrix(sentence_vectors))
+sim2(x = as.matrix(sentence_vectors), y = t(as.matrix(average_sentence)), 
+     method = "cosine", norm = "l2")[,1] %>% 
+  sort(decreasing = TRUE) %>% tail(5)
+```
+
+    ##                                                dibynnodd geiriadur yr academi'n drwm iawn ar gpc; yn wir, prin y gallesid dychmygu creu ga heb gymorth gpc. 
+    ##                                                                                                                                                  -0.6006816 
+    ##                                                                                       4a: sphincter reconstruction and neuromodulation: esgn, sns and ptns. 
+    ##                                                                                                                                                  -0.6043274 
+    ## here, the products target particularly aubergine, cucumber, melon, pepper, blueberry, raspberry, strawberry, tomato, cut flowers and ornamental pot plants. 
+    ##                                                                                                                                                  -0.6522417 
+    ##     amphion's sip platforms included wireless lan baseband processors (ieee 802.11a, hiperlan) and dvb subsystems for cable, satellite and terrestrial dtv. 
+    ##                                                                                                                                                  -0.6533203 
+    ##                                                                                                   (amos bertolacci, scuola normale superiore, pisa, italy). 
+    ##                                                                                                                                                  -0.7277594
+
+These are definitely bad sentences!
