@@ -430,4 +430,12 @@ sim2(x = as.matrix(sentence_vectors), y = t(as.matrix(average_sentence)),
   sort(decreasing = TRUE) %>% tail(5)
 ```
 
-These are definitely bad sentences! 
+These are definitely bad sentences! Let's see if I can find the worst sentences 
+(globally) from the "draft document" under assessment (i.e. Case Study ID 11764)
+
+```{r}
+tidy_ref$global_distance <- 
+  dist2(x = as.matrix(sentence_vectors), y = t(as.matrix(average_sentence)), 
+       method = "euclidean", norm = "l2")[,1]
+
+```
