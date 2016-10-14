@@ -10,8 +10,6 @@ This script aims to prove the following concepts:
 Packages Required
 -----------------
 
-This script will use **text2vec** for the GloVe algorithm, **tibble** for use of the data\_frame, **stringr** for string operations, **tidytext** for managing the dataset, **dplyr** for data manipulation and **ggplot2** for plotting.
-
 ``` r
 library(text2vec)
 library(stringr)
