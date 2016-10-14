@@ -17,13 +17,14 @@ identified programmatically.
 
 This script will use **text2vec** for the GloVe algorithm, **tibble** for use of
 the data_frame, **stringr** for string operations, **tidytext** for managing 
-the dataset, and **ggplot2** for plotting.
+the dataset, **dplyr** for data manipulation and **ggplot2** for plotting.
 
-```{r setup, message=FALSE}
+```{r setup, message=FALSE, cache = TRUE}
 library(text2vec)
 library(stringr)
 library(tibble)
 library(tidytext)
+library(dplyr)
 library(ggplot2)
 ```
 
@@ -34,7 +35,7 @@ been saved locally to speed up analysis. The `unnest_tokens()` function from
 the **tidytext** package is used to clean up the text and break it into 
 sentences.
 
-```{r import}
+```{r import, cache = TRUE}
 ref <- readRDS("~/ref_data.rds")
 ref <- ref[,c("CaseStudyId", "UOA", "ImpactType",
               "Institution", "Title", "ImpactDetails")]
@@ -54,7 +55,7 @@ For the initial investigation of the nature of the distributions generated, the
 GloVe model will only use 2 dimensions. For the final model the number of 
 dimensions will likely be 50.
 
-```{r glove-2d, message=FALSE}
+```{r glove-2d, message=FALSE, cache = TRUE}
 prepare_text <- function(x) {
   x %>% 
   str_to_lower %>% 
@@ -91,14 +92,14 @@ differences between points have meaning. The standard results published in the
 We can take a look at some of these mappings by inspecting the word_vectors 
 data frame.
 
-```{r inspect}
+```{r inspect, cache = TRUE}
 word_vectors[c("cat", "dog", "research", "impact"),]
 ```
 
 We can also look at how these words are distributed across the two dimensional
 space.
 
-```{r plot-2d}
+```{r plot-2d, cache = TRUE}
 words <- as.data.frame(word_vectors)
 names(words) <- c("dim_1", "dim_2")
 ggplot(words) +
@@ -112,7 +113,7 @@ But why assume? We can test this by fitting a 50 dimensional GloVe model and
 then plotting any two dimensions (noting that all dimensions are equally
 important in GloVe, unlike other dimensionality reduction techniques like PCA).
 
-```{r glove-50d, message=FALSE}
+```{r glove-50d, message=FALSE, cache = TRUE}
 glove2 <- GlobalVectors$new(word_vectors_size = 50,
                            vocabulary = vocab,
                            x_max = 10L,
@@ -133,7 +134,7 @@ While we're here we might as well test it formally using the **MVN** package.
 The package doesn't seem to deal so well with large datasets, so we'll test
 normality with a sample.
 
-```{r multi-normality}
+```{r multi-normality, cache = TRUE}
 library(MVN)
 mardiaTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
 hzTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
@@ -150,14 +151,14 @@ Before we move on, we might as well check that similar words are near each
 other, and different words are far apart. We can do this visually using the 
 2 dimensional GloVe model.
 
-```{r check-1}
+```{r check-1, cache = TRUE}
 word_vectors[c("kidney", "bladder", "institute", "university"),]
 ```
 
 It looks like it works pretty well, even in 2 dimensions! To be extra certain
 we can look at similar words in the 50 dimensional GloVe model.
 
-```{r check-2}
+```{r check-2, cache = TRUE}
 get_nearest <- function(x) {
   sim2(x = word_vectors2, y = word_vectors2[x,,drop=F], 
        method = "cosine", norm = "l2")[,1] %>% 
@@ -178,7 +179,7 @@ relationships using a standard test set. This is unlikely to perform very well
 on this dataset as it is quite specific, however it should provide a reasonable
 basis for comparison when tuning the GloVe model later in the project.
 
-```{r}
+```{r, cache = TRUE}
 questions_file <- '~/impactface/Data/questions-words.txt'
 qlst <- prepare_analogy_questions(questions_file,
                                   rownames(word_vectors2),
@@ -199,15 +200,17 @@ to look at sentence context, however this requires significantly more training
 data than I have access to. Other approaches include either:
 
 1. taking the average vector for each of the words in the sentence, or
-1. applying the tf-idf weighted average vector for each of the words in the 
-sentence. 
+1. applying the tf-idf weighted vector for each of the words in the sentence and
+  1. taking the sum
+  1. taking the average
 
 Given that the second option should up-weight important words and down-weight 
 unimportant words, it seems like a good option. We can implement this by 
 constructing a document-term matrix (DTM) and then multiplying the matrices 
-together.
+together. For now I will use the summation approach, and revisit the average
+approach later (in the a separate tuning document).
 
-```{r}
+```{r, cache = TRUE}
 tokens <- word_tokenizer(tidy_ref$text)
 it <- itoken(tokens)
 # use vocab from last GloVe model
@@ -225,7 +228,7 @@ sentences in the corpus than words in the vocabulary) so the formal tests will
 definitely not be satisfied, but **ggplot2** should still be able to handle the
 full dataset.
 
-```{r}
+```{r, cache = TRUE}
 sen_plot <- as.data.frame(as.matrix(sentence_vectors[,c(1,2,25,50)]))
 names(sen_plot) <- c("dim_1", "dim_2", "dim_25", "dim_50")
 ggplot(sen_plot) +
@@ -248,7 +251,7 @@ order):
 1. the furthest sentence
 1. the second-furthest sentence
 
-```{r}
+```{r, cache = TRUE}
 dimnames(sentence_vectors) <- 
   list(str_replace_all(tidy_ref$text,"\\s+", " ") , NULL)
 get_nearest_and_farthest <- function(x, vecs) {
@@ -264,7 +267,7 @@ get_nearest_and_farthest <- function(x, vecs) {
 We can now see if similar sentences are being discovered by the model - here 
 goes nothing!
 
-```{r}
+```{r, cache = TRUE}
 get_nearest_and_farthest(1, sentence_vectors)
 get_nearest_and_farthest(1234, sentence_vectors)
 get_nearest_and_farthest(5678, sentence_vectors)
@@ -289,7 +292,7 @@ We might start again with the 2D GloVe model so that we can visualise all of the
 dimensions. We will select two documents from different fields and compare their
 distributions.
 
-```{r}
+```{r, cache = TRUE}
 sentence_vectors_2d <- dtm_tfidf %*% word_vectors
 sentence_test <- data.frame(
   row_num = which(tidy_ref$CaseStudyId %in% c(100,1004)),
@@ -311,7 +314,7 @@ isn't giving me a lot of hope that the assumption being tested will be viable,
 but we will press on! Before we move on, let's see if there is anything
 interesting about the different ImpactType values overall.
 
-```{r}
+```{r, cache = TRUE}
 sentence_test <- data.frame(
   type = tidy_ref$ImpactType,
   dim_1 = sentence_vectors_2d[,1],
@@ -357,7 +360,7 @@ and their Rehabilitation" from Durham University. The full text of the Impact
 Details section of their submission is included below for reference, broken down
 into sentences for later reference.
 
-```{r}
+```{r, cache = TRUE}
 str_replace_all(tidy_ref$text[which(tidy_ref$CaseStudyId == 11764)],"\\s+", " ")
 ```
 
@@ -369,7 +372,7 @@ iLab, and it can likely be resolved using a different tokenizer).
 We need to build a data frame for each of the sentences, with the 50-dimensional
 GloVe vectors for every sentence.
 
-```{r}
+```{r, cache = TRUE}
 durham <- sentence_vectors[which(tidy_ref$CaseStudyId == 11764),] %>% 
   as.matrix() %>% 
   as.data.frame()
@@ -381,7 +384,7 @@ still use distance measures to identify potential outliers. For now we will just
 look at the first two dimensions graphically, and then use numeric comparisons 
 to extend the analysis to 50 dimensions.
 
-```{r}
+```{r, cache = TRUE}
 durham$sentence_num <- paste0("X",1:nrow(durham))
 ggplot(durham) +
   geom_point(aes(x=V1, y=V2)) +
@@ -393,7 +396,7 @@ This looks promising! X29 (the 29th sentence) rightly appears as an outlier in
 the first two dimensions, as does X14 (the 14th sentence) and potentially X9, 
 X12 and X13. We can look at each of the original sentences below:
 
-```{r}
+```{r, cache = TRUE}
 durham_raw <- 
   str_replace_all(tidy_ref$text[which(tidy_ref$CaseStudyId == 11764)],"\\s+", " ")
 durham_raw[29] # the sentence that doesn't have any words
@@ -409,7 +412,7 @@ and use different language. We shouldn't get too carried away though, let's take
 a look at distances in all 50 dimensions, and look at the 5 "least similar" 
 sentences.
 
-```{r}
+```{r, cache = TRUE}
 average_sentence <- colMeans(durham[,1:50])
 sim2(x = as.matrix(durham[,1:50]), y = t(as.matrix(average_sentence)), 
      method = "cosine", norm = "l2")[,1] %>% 
@@ -421,21 +424,50 @@ other "outlier" sentences. This looks promising!
 
 Going to the other extreme, we can find outliers from the entire corpus, and
 identify whether any of those are part of the document being assessed. Let's 
-start by looking at the biggest outliers overall.
+start by looking at the biggest outliers overall using cosine similarity
 
-```{r}
+```{r, cache = TRUE}
 average_sentence <- colMeans(as.matrix(sentence_vectors))
 sim2(x = as.matrix(sentence_vectors), y = t(as.matrix(average_sentence)), 
      method = "cosine", norm = "l2")[,1] %>% 
   sort(decreasing = TRUE) %>% tail(5)
 ```
 
-These are definitely bad sentences! Let's see if I can find the worst sentences 
-(globally) from the "draft document" under assessment (i.e. Case Study ID 11764)
+These are definitely bad sentences! Let's see if the euclidean distance gives a
+different result.
 
-```{r}
+```{r, cache = TRUE}
 tidy_ref$global_distance <- 
   dist2(x = as.matrix(sentence_vectors), y = t(as.matrix(average_sentence)), 
        method = "euclidean", norm = "l2")[,1]
-
+tidy_ref %>% arrange(desc(global_distance)) %>%
+  select(text) %>%
+  head(5)
 ```
+
+This finds the same result, and gives us a more meaningful measure of distance.
+
+Let's see if I can find the worst sentences globally from the "draft document"
+under assessment (i.e. Case Study ID 11764).
+
+```{r, cache = TRUE}
+draft <- tidy_ref %>% 
+  filter(CaseStudyId == 11764) %>%
+  arrange(desc(global_distance)) %>%
+  select(global_distance,text)
+draft_text <- draft$text
+names(draft_text) <- draft$global_distance
+head(draft_text)
+```
+
+It seems to be identifying two things as outliers:
+
+1. sentences which mention different areas or fields of practice
+1. quotes written in the first person
+
+This is good! Neither of these are automatically "bad" sentences, but it shows
+that the model is doing something useful.
+
+With these results I think I can be reasonably confident that the identification
+of outlier sentences using GloVe is plausible.
+
