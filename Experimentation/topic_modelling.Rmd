@@ -1,0 +1,80 @@
+---
+title: "UK REF Impact Case Studies - Topic Modelling"
+output: github_document
+---
+  
+_This script explores the UK REF Impact Case Studies dataset. The dataset was 
+previously extracted from <http://impact.ref.ac.uk/CaseStudies/> using the 
+refimpact package (which was developed as part of this iLab project) and saved
+locally to allow for faster access._
+
+## Preparation
+
+```{r, message=FALSE}
+library(text2vec)
+library(stringr)
+```
+
+## Data Preparation
+
+Firstly we will load the data into memory and clean it up a little, then create
+a Document Term Matrix
+
+```{r}
+ref <- readRDS("~/ref_data.rds")
+prepare_text <- function(x) {
+  x %>% 
+  str_to_lower %>% 
+  str_replace_all("[^[:alnum:]]", " ") %>% 
+  str_replace_all("\\s+", " ")
+}
+ref$ImpactDetails <- prepare_text(ref$ImpactDetails)
+it <- itoken(ref$ImpactDetails)
+v <- create_vocabulary(it) %>% 
+  prune_vocabulary(doc_proportion_max = 0.1, term_count_min = 5)
+vectorizer <- vocab_vectorizer(v)
+dtm <- create_dtm(it, vectorizer)
+```
+
+Now we will apply the TF-IDF transformation and fit a Latent Semantic Analysis
+topic model. Given that there are 36 units of assessment, let's try fitting a 
+model with 36 topics.
+
+```{r}
+tfidf <- TfIdf$new()
+lsa <- LSA$new(n_topics = 36)
+dtm_tfidf_lsa <- dtm %>% 
+  fit_transform(tfidf) %>% 
+  fit_transform(lsa)
+head(dtm_tfidf_lsa)
+```
+
+That was quick! We could stop and visualise here, but text2vec includes a quick
+visualisation method for Latent Dirichtlet Analysis (which should be a more
+useful model anyway) so we might as well just skip to that.
+
+```{r}
+tokens <- ref$ImpactDetails %>% 
+  prepare_text() %>% 
+  word_tokenizer
+it <- itoken(tokens, ids = ref$CaseStudyId)
+v <- create_vocabulary(it) %>% 
+  prune_vocabulary(term_count_min = 10, doc_proportion_max = 0.2)
+vectorizer <- vocab_vectorizer(v)
+dtm <- create_dtm(it, vectorizer, type = "lda_c")
+
+lda_model <- LDA$new(n_topics = 36, 
+                     vocabulary = v, 
+                     doc_topic_prior = 0.1, 
+                     topic_word_prior = 0.01)
+doc_topic_distr <- lda_model$fit_transform(dtm, 
+                                           n_iter = 1000, 
+                                           convergence_tol = 0.01, 
+                                           check_convergence_every_n = 10)
+
+lda_model$plot()
+```
+
+
+
+
