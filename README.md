@@ -19,6 +19,12 @@ The project plan can be viewed [here](./ProjectPlan.md).
 
 [refimpact](https://github.com/perrystephenson/refimpact) - I wrote some R functions to interface with the REF 2014 Impact Case Studies Database API and turned them into a package. Version 0.1.0 [now available on CRAN](https://cran.r-project.org/package=refimpact).
 
+[Exploration](./Experimentation/exploration.md) - Exploring the dataset and basic text analytics
+
+[Proof of Concept - GloVe distributions as a method of detecting outlier sentences](./Experimentation/GloVeDistributions.md) - Explored the use of the GloVe word embedding model to identify sentences which are potential outliers.
+
+[Proof of Concept - Replacement Sentences](./Experimentation/Replacement.md) - Explored the use of the Word Mover's Distance as a way of identifying potential replacement sentences.
+
 ## Documentation
 
 [Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distill the concept of "good practice" for a rapidly developing field into a single list. Posted to [CIC Around blog](https://15-9203.ca.uts.edu.au/data-science-hygiene/) Friday 16th September.
