@@ -32,6 +32,7 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 /Experimentation/GloVeDistributions_cache/*
+/Experimentation/Replacement_cache/*
 
 .DS_Store
 .Rproj.user
