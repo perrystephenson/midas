@@ -110,17 +110,15 @@ rwmd$verbose <- FALSE
 tidy_ref$rwmd_distance <- dist2(corpus_dtm, unseen_dtm, 
                                 method = rwmd, 
                                 norm = "none")[,1]
-tidy_ref %>% arrange(rwmd_distance) %>% 
-  select(text) %>% 
+suggestions <- tidy_ref %>% 
+  arrange(rwmd_distance) %>% 
   head(3)
+suggestions$text
 ```
 
-    ## # A tibble: 3 × 1
-    ##                                                                          text
-    ##                                                                         <chr>
-    ## 1 impact on policy     the research associated with the development and evalu
-    ## 2 the wider impact of this research       has been acknowledged within the mu
-    ## 3 in addition to the impact on public policy and its resultant impact on
+    ## [1] "impact on policy     the research associated with the development and evaluation of assist has       had a substantial impact on policy."                                            
+    ## [2] "the wider impact of this research       has been acknowledged within the museum world both in the uk and abroad:       `the project had a transformatory effect on the v&amp;a."     
+    ## [3] "in addition to the impact on public policy and its resultant impact on        health and wellbeing, this work        has had a significant impact on both society and practitioners."
 
 This is amazing! I haven't had to do any data cleaning at all to get this to work, the Relaxed Word Mover's Distance is doing all of the work for me!
 

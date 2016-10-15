@@ -106,9 +106,10 @@ rwmd$verbose <- FALSE
 tidy_ref$rwmd_distance <- dist2(corpus_dtm, unseen_dtm, 
                                 method = rwmd, 
                                 norm = "none")[,1]
-tidy_ref %>% arrange(rwmd_distance) %>% 
-  select(text) %>% 
+suggestions <- tidy_ref %>% 
+  arrange(rwmd_distance) %>% 
   head(3)
+suggestions$text
 ```
 
 This is amazing! I haven't had to do any data cleaning at all to get this to 
