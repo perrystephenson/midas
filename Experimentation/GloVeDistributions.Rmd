@@ -67,14 +67,14 @@ vocab <- prune_vocabulary(vocab, term_count_min = 5L)
 vectorizer <- vocab_vectorizer(vocab, grow_dtm = FALSE, skip_grams_window = 5L)
 tcm <- create_tcm(it, vectorizer)
 
-glove <- GlobalVectors$new(word_vectors_size = 2,
+glove_2d <- GlobalVectors$new(word_vectors_size = 2,
                            vocabulary = vocab,
                            x_max = 10L,
                            #lambda = 1e-5,
                            shuffle=T)
-glove$fit(tcm, n_iter = 50)
+glove_2d$fit(tcm, n_iter = 50)
 
-word_vectors <- glove$get_word_vectors()
+word_vectors_2d <- glove_2d$get_word_vectors()
 ```
 
 This GloVe model has now mapped each word from the corpus into a two dimensional
@@ -89,16 +89,16 @@ We can take a look at some of these mappings by inspecting the word_vectors
 data frame.
 
 ```{r inspect, cache = TRUE}
-word_vectors[c("cat", "dog", "research", "impact"),]
+word_vectors_2d[c("cat", "dog", "research", "impact"),]
 ```
 
 We can also look at how these words are distributed across the two dimensional
 space.
 
 ```{r plot-2d, cache = TRUE}
-words <- as.data.frame(word_vectors)
-names(words) <- c("dim_1", "dim_2")
-ggplot(words) +
+words_2d <- as.data.frame(word_vectors_2d)
+names(words_2d) <- c("dim_1", "dim_2")
+ggplot(words_2d) +
   geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
   geom_density2d(aes(x=dim_1, y=dim_2))
 ```
@@ -110,17 +110,17 @@ then plotting any two dimensions (noting that all dimensions are equally
 important in GloVe, unlike other dimensionality reduction techniques like PCA).
 
 ```{r glove-50d, message=FALSE, cache = TRUE}
-glove2 <- GlobalVectors$new(word_vectors_size = 50,
+glove_50d <- GlobalVectors$new(word_vectors_size = 50,
                            vocabulary = vocab,
                            x_max = 10L,
                            lambda = 1e-5,
                            shuffle=T)
-glove2$fit(tcm, n_iter = 50)
+glove_50d$fit(tcm, n_iter = 50)
 
-word_vectors2 <- glove2$get_word_vectors()
-words2 <- as.data.frame(word_vectors2[,c(1,2)])
-names(words2) <- c("dim_1", "dim_2")
-ggplot(words2) +
+word_vectors_50d <- glove_50d$get_word_vectors()
+words_50d <- as.data.frame(word_vectors_50d[,c(1,2)])
+names(words_50d) <- c("dim_1", "dim_2")
+ggplot(words_50d) +
   geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
   geom_density2d(aes(x=dim_1, y=dim_2))
 ```
@@ -132,9 +132,9 @@ normality with a sample.
 
 ```{r multi-normality, cache = TRUE}
 library(MVN)
-mardiaTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
-hzTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
-roystonTest(word_vectors2[sample(1:nrow(word_vectors2), 2000),])
+mardiaTest(word_vectors_50d[sample(1:nrow(word_vectors_50d), 5000),])
+hzTest(word_vectors_50d[sample(1:nrow(word_vectors_50d), 5000),])
+roystonTest(word_vectors_50d[sample(1:nrow(word_vectors_50d), 2000),])
 ```
 
 These are all pretty resounding "no" results from the formal tests, however it 
@@ -148,7 +148,7 @@ other, and different words are far apart. We can do this visually using the
 2 dimensional GloVe model.
 
 ```{r check-1, cache = TRUE}
-word_vectors[c("kidney", "bladder", "institute", "university"),]
+word_vectors_2d[c("kidney", "bladder", "institute", "university"),]
 ```
 
 It looks like it works pretty well, even in 2 dimensions! To be extra certain
@@ -156,7 +156,7 @@ we can look at similar words in the 50 dimensional GloVe model.
 
 ```{r check-2, cache = TRUE}
 get_nearest <- function(x) {
-  sim2(x = word_vectors2, y = word_vectors2[x,,drop=F], 
+  sim2(x = word_vectors_50d, y = word_vectors_50d[x,,drop=F], 
        method = "cosine", norm = "l2")[,1] %>% 
     sort(decreasing = TRUE) %>% head(5)
 }
@@ -178,10 +178,10 @@ basis for comparison when tuning the GloVe model later in the project.
 ```{r, cache = TRUE}
 questions_file <- '~/impactface/Data/questions-words.txt'
 qlst <- prepare_analogy_questions(questions_file,
-                                  rownames(word_vectors2),
+                                  rownames(word_vectors_50d),
                                   verbose = T)
 res <- check_analogy_accuracy(questions_list = qlst, 
-                              m_word_vectors = word_vectors2,
+                              m_word_vectors = word_vectors_50d,
                               verbose = T)
 ```
 
@@ -214,7 +214,7 @@ vectorizer <- vocab_vectorizer(vocab)
 dtm <- create_dtm(it, vectorizer)
 tfidf <- TfIdf$new()
 dtm_tfidf <- fit_transform(dtm, tfidf)
-sentence_vectors <- dtm_tfidf %*% word_vectors2
+sentence_vectors <- dtm_tfidf %*% word_vectors_50d
 ```
 
 I have to admit I'm a little surprised that worked; I was expecting that step to
@@ -264,7 +264,7 @@ We can now see if similar sentences are being discovered by the model - here
 goes nothing!
 
 ```{r, cache = TRUE}
-get_nearest_and_farthest(1, sentence_vectors)
+get_nearest_and_farthest(1,    sentence_vectors)
 get_nearest_and_farthest(1234, sentence_vectors)
 get_nearest_and_farthest(5678, sentence_vectors)
 get_nearest_and_farthest(9999, sentence_vectors)
@@ -289,7 +289,7 @@ dimensions. We will select two documents from different fields and compare their
 distributions.
 
 ```{r, cache = TRUE}
-sentence_vectors_2d <- dtm_tfidf %*% word_vectors
+sentence_vectors_2d <- dtm_tfidf %*% word_vectors_2d
 sentence_test <- data.frame(
   row_num = which(tidy_ref$CaseStudyId %in% c(100,1004)),
   type = tidy_ref$ImpactType[which(tidy_ref$CaseStudyId %in% c(100,1004))]
@@ -467,3 +467,10 @@ that the model is doing something useful.
 With these results I think I can be reasonably confident that the identification
 of outlier sentences using GloVe is plausible.
 
+We should save some of these objects to file so we can load them quickly in the
+next experiment.
+
+```{r}
+save_list <- list(ref, tidy_ref, sentence_vectors, word_vectors_50d, tfidf, vocab, dtm)
+saveRDS(save_list, "~/markdown_cache.rds")
+```

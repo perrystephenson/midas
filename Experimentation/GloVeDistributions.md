@@ -64,14 +64,14 @@ vocab <- prune_vocabulary(vocab, term_count_min = 5L)
 vectorizer <- vocab_vectorizer(vocab, grow_dtm = FALSE, skip_grams_window = 5L)
 tcm <- create_tcm(it, vectorizer)
 
-glove <- GlobalVectors$new(word_vectors_size = 2,
+glove_2d <- GlobalVectors$new(word_vectors_size = 2,
                            vocabulary = vocab,
                            x_max = 10L,
                            #lambda = 1e-5,
                            shuffle=T)
-glove$fit(tcm, n_iter = 50)
+glove_2d$fit(tcm, n_iter = 50)
 
-word_vectors <- glove$get_word_vectors()
+word_vectors_2d <- glove_2d$get_word_vectors()
 ```
 
 This GloVe model has now mapped each word from the corpus into a two dimensional space where (in practice) related words are grouped together and the vector differences between points have meaning. The standard results published in the **word2vec** and **GloVe** papers are:
@@ -82,21 +82,21 @@ This GloVe model has now mapped each word from the corpus into a two dimensional
 We can take a look at some of these mappings by inspecting the word\_vectors data frame.
 
 ``` r
-word_vectors[c("cat", "dog", "research", "impact"),]
+word_vectors_2d[c("cat", "dog", "research", "impact"),]
 ```
 
-    ##                  [,1]       [,2]
-    ## cat      -0.001322268 -0.4340778
-    ## dog       0.164832056 -1.4152933
-    ## research  4.040392876  2.0768546
-    ## impact    3.432395339  2.4401799
+    ##                [,1]       [,2]
+    ## cat      -0.2394704 -0.4142355
+    ## dog      -0.6542439 -1.2419657
+    ## research  4.6133149 -0.1607536
+    ## impact    4.2789648 -0.4082553
 
 We can also look at how these words are distributed across the two dimensional space.
 
 ``` r
-words <- as.data.frame(word_vectors)
-names(words) <- c("dim_1", "dim_2")
-ggplot(words) +
+words_2d <- as.data.frame(word_vectors_2d)
+names(words_2d) <- c("dim_1", "dim_2")
+ggplot(words_2d) +
   geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
   geom_density2d(aes(x=dim_1, y=dim_2))
 ```
@@ -106,17 +106,17 @@ ggplot(words) +
 This is good! They sort of resemble a normal distribution with a bit of noise, and this may well improve as the dimensionality of the GloVe model increases. But why assume? We can test this by fitting a 50 dimensional GloVe model and then plotting any two dimensions (noting that all dimensions are equally important in GloVe, unlike other dimensionality reduction techniques like PCA).
 
 ``` r
-glove2 <- GlobalVectors$new(word_vectors_size = 50,
+glove_50d <- GlobalVectors$new(word_vectors_size = 50,
                            vocabulary = vocab,
                            x_max = 10L,
                            lambda = 1e-5,
                            shuffle=T)
-glove2$fit(tcm, n_iter = 50)
+glove_50d$fit(tcm, n_iter = 50)
 
-word_vectors2 <- glove2$get_word_vectors()
-words2 <- as.data.frame(word_vectors2[,c(1,2)])
-names(words2) <- c("dim_1", "dim_2")
-ggplot(words2) +
+word_vectors_50d <- glove_50d$get_word_vectors()
+words_50d <- as.data.frame(word_vectors_50d[,c(1,2)])
+names(words_50d) <- c("dim_1", "dim_2")
+ggplot(words_50d) +
   geom_point(aes(x=dim_1, y=dim_2), alpha = 0.05) +
   geom_density2d(aes(x=dim_1, y=dim_2))
 ```
@@ -127,56 +127,51 @@ This looks like the assumption of multivariate normality might be okay! Woohoo! 
 
 ``` r
 library(MVN)
-```
-
-    ## sROC 0.1-2 loaded
-
-``` r
-mardiaTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
+mardiaTest(word_vectors_50d[sample(1:nrow(word_vectors_50d), 5000),])
 ```
 
     ##    Mardia's Multivariate Normality Test 
     ## --------------------------------------- 
-    ##    data : word_vectors2[sample(1:nrow(word_vectors2), 5000), ] 
+    ##    data : word_vectors_50d[sample(1:nrow(word_vectors_50d), 5000), ] 
     ## 
-    ##    g1p            : 45.83913 
-    ##    chi.skew       : 38199.27 
+    ##    g1p            : 46.58029 
+    ##    chi.skew       : 38816.91 
     ##    p.value.skew   : 0 
     ## 
-    ##    g2p            : 2699.26 
-    ##    z.kurtosis     : 48.66621 
+    ##    g2p            : 2701.433 
+    ##    z.kurtosis     : 49.73166 
     ##    p.value.kurt   : 0 
     ## 
-    ##    chi.small.skew : 38223.09 
+    ##    chi.small.skew : 38841.11 
     ##    p.value.small  : 0 
     ## 
     ##    Result          : Data are not multivariate normal. 
     ## ---------------------------------------
 
 ``` r
-hzTest(word_vectors2[sample(1:nrow(word_vectors2), 5000),])
+hzTest(word_vectors_50d[sample(1:nrow(word_vectors_50d), 5000),])
 ```
 
     ##   Henze-Zirkler's Multivariate Normality Test 
     ## --------------------------------------------- 
-    ##   data : word_vectors2[sample(1:nrow(word_vectors2), 5000), ] 
+    ##   data : word_vectors_50d[sample(1:nrow(word_vectors_50d), 5000), ] 
     ## 
-    ##   HZ      : 1.000343 
+    ##   HZ      : 1.000196 
     ##   p-value : 0 
     ## 
     ##   Result  : Data are not multivariate normal. 
     ## ---------------------------------------------
 
 ``` r
-roystonTest(word_vectors2[sample(1:nrow(word_vectors2), 2000),])
+roystonTest(word_vectors_50d[sample(1:nrow(word_vectors_50d), 2000),])
 ```
 
     ##   Royston's Multivariate Normality Test 
     ## --------------------------------------------- 
-    ##   data : word_vectors2[sample(1:nrow(word_vectors2), 2000), ] 
+    ##   data : word_vectors_50d[sample(1:nrow(word_vectors_50d), 2000), ] 
     ## 
-    ##   H       : 169.3959 
-    ##   p-value : 6.824157e-15 
+    ##   H       : 183.1528 
+    ##   p-value : 4.450937e-17 
     ## 
     ##   Result  : Data are not multivariate normal. 
     ## ---------------------------------------------
@@ -186,49 +181,49 @@ These are all pretty resounding "no" results from the formal tests, however it i
 Before we move on, we might as well check that similar words are near each other, and different words are far apart. We can do this visually using the 2 dimensional GloVe model.
 
 ``` r
-word_vectors[c("kidney", "bladder", "institute", "university"),]
+word_vectors_2d[c("kidney", "bladder", "institute", "university"),]
 ```
 
-    ##                 [,1]       [,2]
-    ## kidney     0.6172394 -1.5871525
-    ## bladder    0.2802327 -2.0158139
-    ## institute  2.7051886 -0.8741831
-    ## university 2.9325219  0.1342112
+    ##                  [,1]       [,2]
+    ## kidney     -0.3659557 -1.7681422
+    ## bladder    -0.9396034 -1.8377289
+    ## institute   1.5084400 -1.3535451
+    ## university  2.4420106  0.2618468
 
 It looks like it works pretty well, even in 2 dimensions! To be extra certain we can look at similar words in the 50 dimensional GloVe model.
 
 ``` r
 get_nearest <- function(x) {
-  sim2(x = word_vectors2, y = word_vectors2[x,,drop=F], 
+  sim2(x = word_vectors_50d, y = word_vectors_50d[x,,drop=F], 
        method = "cosine", norm = "l2")[,1] %>% 
     sort(decreasing = TRUE) %>% head(5)
 }
 get_nearest("kidney")
 ```
 
-    ##      kidney     chronic  transplant       renal respiratory 
-    ##   1.0000000   0.6215615   0.6055849   0.5593449   0.5577383
+    ##     kidney    chronic transplant         nd      renal 
+    ##  1.0000000  0.6451525  0.6343006  0.6030427  0.5788019
 
 ``` r
 get_nearest("bladder")
 ```
 
-    ##    bladder     rectal   invasive     ransom ultrasonic 
-    ##  1.0000000  0.6231641  0.6054690  0.5773150  0.5704454
+    ##   bladder powerplex      lung  invasive        rh 
+    ## 1.0000000 0.6383812 0.6177171 0.6022476 0.5939162
 
 ``` r
 get_nearest("institute")
 ```
 
-    ##  institute    academy    british department australian 
-    ##  1.0000000  0.6276094  0.6224353  0.6005017  0.5877603
+    ##   institute  department association  excellence     academy 
+    ##   1.0000000   0.6288130   0.5969288   0.5954275   0.5940704
 
 ``` r
 get_nearest("university")
 ```
 
-    ## university  cambridge     oxford    glasgow    cardiff 
-    ##  1.0000000  0.7508616  0.7495244  0.7234860  0.7208967
+    ## university  cambridge     oxford    bristol    glasgow 
+    ##  1.0000000  0.7450465  0.7353518  0.7336987  0.7315424
 
 This is looking promising - similar words are near each other in the 50D representation, which suggests it is doing a reasonable job of separating out the words.
 
@@ -237,47 +232,47 @@ The final thing we can do to assess the GloVe representation is to test the word
 ``` r
 questions_file <- '~/impactface/Data/questions-words.txt'
 qlst <- prepare_analogy_questions(questions_file,
-                                  rownames(word_vectors2),
+                                  rownames(word_vectors_50d),
                                   verbose = T)
 ```
 
-    ## 2016-10-13 23:41:30 -  9018 full questions found out of 19544 total
+    ## 2016-10-15 15:21:38 -  9018 full questions found out of 19544 total
 
 ``` r
 res <- check_analogy_accuracy(questions_list = qlst, 
-                              m_word_vectors = word_vectors2,
+                              m_word_vectors = word_vectors_50d,
                               verbose = T)
 ```
 
-    ## 2016-10-13 23:41:31 - capital-common-countries: correct 63 out of 506, accuracy = 0.1245
+    ## 2016-10-15 15:21:39 - capital-common-countries: correct 50 out of 506, accuracy = 0.0988
 
-    ## 2016-10-13 23:41:35 - capital-world: correct 61 out of 1638, accuracy = 0.0372
+    ## 2016-10-15 15:21:43 - capital-world: correct 74 out of 1638, accuracy = 0.0452
 
-    ## 2016-10-13 23:41:35 - currency: correct 0 out of 40, accuracy = 0.0000
+    ## 2016-10-15 15:21:43 - currency: correct 0 out of 40, accuracy = 0.0000
 
-    ## 2016-10-13 23:41:35 - city-in-state: correct 11 out of 449, accuracy = 0.0245
+    ## 2016-10-15 15:21:43 - city-in-state: correct 7 out of 449, accuracy = 0.0156
 
-    ## 2016-10-13 23:41:36 - family: correct 22 out of 182, accuracy = 0.1209
+    ## 2016-10-15 15:21:44 - family: correct 22 out of 182, accuracy = 0.1209
 
-    ## 2016-10-13 23:41:37 - gram1-adjective-to-adverb: correct 3 out of 506, accuracy = 0.0059
+    ## 2016-10-15 15:21:45 - gram1-adjective-to-adverb: correct 3 out of 506, accuracy = 0.0059
 
-    ## 2016-10-13 23:41:37 - gram2-opposite: correct 0 out of 240, accuracy = 0.0000
+    ## 2016-10-15 15:21:45 - gram2-opposite: correct 1 out of 240, accuracy = 0.0042
 
-    ## 2016-10-13 23:41:39 - gram3-comparative: correct 70 out of 930, accuracy = 0.0753
+    ## 2016-10-15 15:21:47 - gram3-comparative: correct 75 out of 930, accuracy = 0.0806
 
-    ## 2016-10-13 23:41:39 - gram4-superlative: correct 9 out of 210, accuracy = 0.0429
+    ## 2016-10-15 15:21:47 - gram4-superlative: correct 10 out of 210, accuracy = 0.0476
 
-    ## 2016-10-13 23:41:41 - gram5-present-participle: correct 44 out of 870, accuracy = 0.0506
+    ## 2016-10-15 15:21:49 - gram5-present-participle: correct 52 out of 870, accuracy = 0.0598
 
-    ## 2016-10-13 23:41:43 - gram6-nationality-adjective: correct 74 out of 1299, accuracy = 0.0570
+    ## 2016-10-15 15:21:51 - gram6-nationality-adjective: correct 60 out of 1299, accuracy = 0.0462
 
-    ## 2016-10-13 23:41:45 - gram7-past-tense: correct 74 out of 992, accuracy = 0.0746
+    ## 2016-10-15 15:21:53 - gram7-past-tense: correct 78 out of 992, accuracy = 0.0786
 
-    ## 2016-10-13 23:41:46 - gram8-plural: correct 5 out of 650, accuracy = 0.0077
+    ## 2016-10-15 15:21:54 - gram8-plural: correct 3 out of 650, accuracy = 0.0046
 
-    ## 2016-10-13 23:41:47 - gram9-plural-verbs: correct 34 out of 506, accuracy = 0.0672
+    ## 2016-10-15 15:21:55 - gram9-plural-verbs: correct 43 out of 506, accuracy = 0.0850
 
-    ## 2016-10-13 23:41:47 - OVERALL ACCURACY = 0.0521
+    ## 2016-10-15 15:21:55 - OVERALL ACCURACY = 0.0530
 
 The overall accuracy isn't hugely important in this context, and it will be improved upon when the model is tuned.
 
@@ -301,7 +296,7 @@ vectorizer <- vocab_vectorizer(vocab)
 dtm <- create_dtm(it, vectorizer)
 tfidf <- TfIdf$new()
 dtm_tfidf <- fit_transform(dtm, tfidf)
-sentence_vectors <- dtm_tfidf %*% word_vectors2
+sentence_vectors <- dtm_tfidf %*% word_vectors_50d
 ```
 
 I have to admit I'm a little surprised that worked; I was expecting that step to be a lot harder! The next step is to revisit the multivariate normality assumption with this new data. There is a heap more of it (as there are more sentences in the corpus than words in the vocabulary) so the formal tests will definitely not be satisfied, but **ggplot2** should still be able to handle the full dataset.
@@ -348,7 +343,7 @@ get_nearest_and_farthest <- function(x, vecs) {
 We can now see if similar sentences are being discovered by the model - here goes nothing!
 
 ``` r
-get_nearest_and_farthest(1, sentence_vectors)
+get_nearest_and_farthest(1,    sentence_vectors)
 ```
 
     ##                                                                                                                                                                                                                                                                               the historical, cultural, methodological and ethical insights from the research and outputs have resulted in pioneering, wide-ranging and sustained impact from ntu's leading involvement and advisory role in a number of impactful projects in the documentation, management and renewal of built heritage in oman and the uae and its dissemination through public engagement. 
@@ -419,7 +414,7 @@ To save you scrolling all the way back to the top of the document, the second as
 We might start again with the 2D GloVe model so that we can visualise all of the dimensions. We will select two documents from different fields and compare their distributions.
 
 ``` r
-sentence_vectors_2d <- dtm_tfidf %*% word_vectors
+sentence_vectors_2d <- dtm_tfidf %*% word_vectors_2d
 sentence_test <- data.frame(
   row_num = which(tidy_ref$CaseStudyId %in% c(100,1004)),
   type = tidy_ref$ImpactType[which(tidy_ref$CaseStudyId %in% c(100,1004))]
@@ -659,3 +654,10 @@ It seems to be identifying two things as outliers:
 This is good! Neither of these are automatically "bad" sentences, but it shows that the model is doing something useful.
 
 With these results I think I can be reasonably confident that the identification of outlier sentences using GloVe is plausible.
+
+We should save some of these objects to file so we can load them quickly in the next experiment.
+
+``` r
+save_list <- list(ref, tidy_ref, sentence_vectors, word_vectors_50d, tfidf, vocab, dtm)
+saveRDS(save_list, "~/markdown_cache.rds")
+```
