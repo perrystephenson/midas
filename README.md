@@ -1,8 +1,8 @@
-# Impact McImpactface
-_A.K.A. The Derek Zoolander Centre for Researchers Who Can’t Impact Case Study Good_
+# MIDAS
+_Minimising Inferred Distance to Average Sentences_
 
 ### About this repository
-This repo contains both code and documentation for my Impact McImpactface project, which is being completed as part of the Master of Data Science and Innovation "iLab 1" subject. Using Git for both code and documentation allows version control for both elements, and will allow future students engaging with this challenge (future MDSI students) to simply fork the repository and start working. 
+This repo contains both code and documentation for my [UTS MDSI iLab 1](http://handbook.uts.edu.au/subjects/36102.html) project. Every component of this project other than the powerpoint presentation is contained within this repository to make it as easy as possible for students undertaking iLab projects in future semesters to fork the repository and continue working on the project. Visitors to this repo who are not MDSI students are welcome to take a look around and fork the repo as well!
 
 ## The Project
 ### Original Specification
@@ -27,11 +27,11 @@ The project plan can be viewed [here](./ProjectPlan.md).
 
 ## Documentation
 
-[Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distill the concept of "good practice" for a rapidly developing field into a single list. Posted to [CIC Around blog](https://15-9203.ca.uts.edu.au/data-science-hygiene/) Friday 16th September.
+[Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distil the concept of "good practice" for a rapidly developing field into a single list. Posted to [CIC Around blog](https://15-9203.ca.uts.edu.au/data-science-hygiene/) Friday 16th September (requires UTS login).
 
 [Developing Data Science Hygiene](./Documentation/DevelopingDSH.md) - the process I went through when developing the above document.
 
-[Understanding Text Mining](./Documentation/UnderstandingTextMining.md) - a thorough and detailed set of notes about current best practices in text mining.
+[Understanding Text Mining](./Documentation/UnderstandingTextMining.md) - a thorough and detailed set of notes about my understanding of current best practices in text mining.
 
 [Text Mining in R](./Documentation/TextMiningInR.md) - a review of the set of text mining techniques which are currently available in R.
 
