@@ -7,34 +7,34 @@ library(magrittr)
 add_bad_sentences <- function(x) {
   
   x$ImpactDetails[1] %<>% 
-    str_c(" My analysis was awesome and had a huge impact on the world.")
+    str_c(" This project awesome and people in Australia and America said it was awesome.")
   
   x$ImpactDetails[2] %<>% 
-    str_c(" Other universities really liked what we did and now they want to do it too.")
+    str_c(" We worked with IBM and Microsoft and Apple and Google and lots of other companies.")
   
   x$ImpactDetails[3] %<>% 
-    str_c(" We worked with people from the biology, psychology and computer science departments.")
+    str_c(" We made friends and worked with people from the psychology department and the computer science department.")
   
   x$ImpactDetails[4] %<>% 
-    str_c(" Many of our patients said that they felt better.")
+    str_c(" Everyone was sick at the start and now they are not sick at the end.")
   
   x$ImpactDetails[5] %<>% 
-    str_c(" A lot of people used to die and now less people die.")
+    str_c(" Lots of people were dying at the start and now less people are dying because of our project.")
   
   x$ImpactDetails[6] %<>% 
-    str_c(" We got our project in the local newspaper and on television.")
+    str_c(" We got our project in the local newspaper and on television and everyone watched.")
   
   x$ImpactDetails[7] %<>% 
-    str_c(" We had a really big team and everyone did something different.")
+    str_c(" We tried to do something different to what everyone else was doing.")
   
   x$ImpactDetails[8] %<>% 
-    str_c(" Every year lots of people are sick with a sleep disease.")
+    str_c(" Every year many people get sick kidneys and it makes them die.")
   
   x$ImpactDetails[9] %<>% 
     str_c(" We came up with a new way of doing things that was better than the old way.")
   
   x$ImpactDetails[10] %<>% 
-    str_c(" The University of Technology Sydney is the best university in the world.")
+    str_c(" The university got lots of money from the government and from IBM and Microsoft.")
   
   return(x)
   

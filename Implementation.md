@@ -1,15 +1,13 @@
 Implementation
 ================
 
-This document will string together each of the key implementation steps and demonstrate the effectiveness of the end-to-end system as a static analysis. The majority of the implementation is inside functions in the "Functions" folder of this repository, which allows the code to be easily re-used in the event I get time to build a live demonstration system. These functions should also minimise the time-to-implementation for anyone wishing to apply this technique to a new dataset.
-
-If you have cloned this repository and you are attempting to run this code on your own machine, make sure you set your working directory to the root folder of the repository: `setwd("<repo root>")`.
+This document will string together each of the key implementation steps and demonstrate the effectiveness of the end-to-end system as a static analysis. Some of the implementation is inside functions in the "Functions" folder of this repository, which is being developed to allow the code to be easily re-used in the event I get time to build a live demonstration system. These functions should also minimise the time-to-implementation for anyone wishing to apply this technique to a new dataset.
 
 Setup and Packages
 ------------------
 
 ``` r
-setwd("~/impactface")
+root <- path.expand("~/impactface/")
 set.seed(2016L)
 library(dplyr)
 library(ggplot2)
@@ -27,7 +25,7 @@ Data Import
 The data will be either imported from an RDS file on disk, or directly from the REF Impact Case Study Database using the `refimpact` package. We will also do some very basic cleaning by removing superfluous whitespace from the text fields.
 
 ``` r
-source("Functions/load_ref_data.R")
+source(paste0(root, "Functions/load_ref_data.R"))
 ref <- load_ref_data() %>% 
   select(CaseStudyId, UOA, ImpactType, Institution, Title, ImpactDetails)
 in_test <- sample(1:nrow(ref), 10)
@@ -51,7 +49,7 @@ glimpse(ref)
     ## $ Title         <chr> "Influencing guidelines on management of hyperte...
     ## $ ImpactDetails <chr> "Each year, in England alone, approximately 152,...
 
-If you are confused by the use of the `%<>%` operator then you should call `?'%<>%'` to learn more about it!
+If you are confused by the use of the `%<>%` operator (from the **magrittr** package) then you should call `?'%<>%'` to learn more about it!
 
 Tidy Text
 ---------
@@ -75,9 +73,16 @@ glimpse(tidy_ref)
 Fit a GloVe Model
 -----------------
 
+In Tuning.Rmd I tried 4 different values of dimensions and 4 different values of window length. In general, higher values of both seem to improve the ability of the GloVe model to score higher on the standard test set, however changing the values of these values doesn't seem to influence the identification of outliers. According to some irresponsibly quick reading of Google search results, the following statements are broadly reasonable:
+
+1.  Higher-dimension models are more likely to capture meaningful relationships
+2.  Larger skip-gram windows are more likely to capture meaningful relationsips
+
+However, larger skip-gram windows also mean that the model will favour document-level word context over sentence-level word context. Given that future analysis in this project will be focused on sentences, I think that it makes sense to choose a moderate dimension (75) and a relatively small skip-window (5).
+
 ``` r
-source("Functions/fit_glove_model.R")
-tmp <- fit_glove_model(ref$ImpactDetails, 100, 15) # From Tuning.md
+source(paste0(root, "Functions/fit_glove_model.R"))
+tmp <- fit_glove_model(ref$ImpactDetails, 75, 5) 
 glove <- tmp[[1]]
 vocab <- tmp[[2]]
 rm(tmp)
@@ -87,12 +92,12 @@ word_vectors <- glove$get_word_vectors()
 Locate Sentences in GloVe Representation
 ----------------------------------------
 
-The rows of this matrix will align with the rows of the `tidy_ref` data frame, so neither object should be sorted permanently. We will be applying a tfidf transform (and we will need to reapply this transform later) so the tfidf model object is fit to the data prior to being passed into the function.
+We will be applying a tfidf transform (and we will need to reapply this transform later) so the tfidf model object is fit to the data prior to being passed into the function.
 
 ``` r
-source("Functions/fit_tfidf.R")
+source(paste0(root, "Functions/fit_tfidf.R"))
 tfidf <- fit_tfidf(tidy_ref$Sentence, vocab)
-source("Functions/get_sentence_vectors.R")
+source(paste0(root, "Functions/get_sentence_vectors.R"))
 sentence_vectors <- get_sentence_vectors(sentences = tidy_ref$Sentence, 
                                          vocab = vocab, 
                                          transform = tfidf, 
@@ -105,7 +110,7 @@ Import Unseen Data and Identify Outliers
 Ten impact case studies were kept out of the training data to allow testing on unseen data. Each of these 10 case studies will have a new sentence added to the ImpactDetails field, and these sentences will be intentionally unsuitable for inclusion in an impact case study.
 
 ``` r
-source("Functions/add_bad_sentences.R")
+source(paste0(root, "Functions/add_bad_sentences.R"))
 test <- add_bad_sentences(test)
 ```
 
@@ -150,17 +155,17 @@ tidy_test %>% arrange(desc(global_distance)) %>%
     ##                                                                       Sentence
     ##                                                                          <chr>
     ## 1                                                     Autoimmune encephalitis.
-    ## 2  For instance, when discussing dosing and augmentation of clozapine, use of 
-    ## 3  For example, Taylor 2009a is used throughout when considering clozapine aug
-    ## 4  "The differential diagnosis of acute encephalitis is broad, encompassing in
-    ## 5  Torture Team research successfully challenged the narrative of the US admin
-    ## 6  This was in consequence of a conviction that gender bias (as well as other 
-    ## 7  In 2011 Human Rights Watch, an international non-governmental organization,
-    ## 8  The actor who played Burton in the BBC4 biopic, `immersed himself in Richar
-    ## 9  The two standard treatments for myasthenia gravis are anticholinesterase dr
-    ## 10 Commemorating Burton Initiatives to commemorate and celebrate Burton's care
+    ## 2                                                                        108].
+    ## 3  For instance, when discussing dosing and augmentation of clozapine, use of 
+    ## 4  Autoimmune Disorders (VGKC-complex proteins, LGI1, CASPR2, contactin-2) PCT
+    ## 5  Furthermore products must meet strict government legalisation and Christine
+    ## 6  For example, Taylor 2009a is used throughout when considering clozapine aug
+    ## 7  Torture Team research successfully challenged the narrative of the US admin
+    ## 8  The two standard treatments for myasthenia gravis are anticholinesterase dr
+    ## 9  Examples of industrial members are Pfizer, Johnson Matthey and Procter &amp
+    ## 10 The review cites a Vincent group paper (Irani et al., 2010b) as evidence fo
 
-This approach is not working well - the "bad" sentences don't start showing up until row 20 (out of 302). We can do better!
+This approach is not working well!
 
 ### Average Distance Approach
 
@@ -180,54 +185,27 @@ tidy_test %>% arrange(desc(average_distance)) %>%
     ## # A tibble: 10 × 1
     ##                                                                       Sentence
     ##                                                                          <chr>
-    ## 1  For instance, when discussing dosing and augmentation of clozapine, use of 
-    ## 2                                                     Autoimmune encephalitis.
-    ## 3  For example, Taylor 2009a is used throughout when considering clozapine aug
-    ## 4  Torture Team research successfully challenged the narrative of the US admin
-    ## 5  "The differential diagnosis of acute encephalitis is broad, encompassing in
-    ## 6  This was in consequence of a conviction that gender bias (as well as other 
-    ## 7  In 2011 Human Rights Watch, an international non-governmental organization,
-    ## 8  Commemorating Burton Initiatives to commemorate and celebrate Burton's care
-    ## 9  The actor who played Burton in the BBC4 biopic, `immersed himself in Richar
-    ## 10 The two standard treatments for myasthenia gravis are anticholinesterase dr
+    ## 1                                                     Autoimmune encephalitis.
+    ## 2                                                                        108].
+    ## 3  For instance, when discussing dosing and augmentation of clozapine, use of 
+    ## 4  Autoimmune Disorders (VGKC-complex proteins, LGI1, CASPR2, contactin-2) PCT
+    ## 5  Furthermore products must meet strict government legalisation and Christine
+    ## 6  For example, Taylor 2009a is used throughout when considering clozapine aug
+    ## 7  Torture Team research successfully challenged the narrative of the US admin
+    ## 8  The two standard treatments for myasthenia gravis are anticholinesterase dr
+    ## 9  Examples of industrial members are Pfizer, Johnson Matthey and Procter &amp
+    ## 10 The review cites a Vincent group paper (Irani et al., 2010b) as evidence fo
 
-This is also not ideal, the first "bad" sentence showed up in position 14, but we must be able to do better!
+This is also not ideal, and is clearly not working very well.
 
-### Word Mover's Distance
-
-This is a long shot, and it's a very expensive computation, but it has worked well for replacement so I have high hopes!
+### Cosine Similarity
 
 ``` r
-tokens <- 
-  tidy_ref$Sentence %>% 
-  str_to_lower() %>% 
-  str_replace_all("[^[:alnum:]]", " ") %>% 
-  str_replace_all("\\s+", " ") %>% 
-  str_replace_all("(^\\s+)|(\\s+$)", "") %>% 
-  word_tokenizer()
-it <- itoken(tokens)
-vectorizer <- vocab_vectorizer(vocab)
-dtm <- create_dtm(it, vectorizer)
-
-tokens <- 
-  tidy_test$Sentence %>% 
-  str_to_lower() %>% 
-  str_replace_all("[^[:alnum:]]", " ") %>% 
-  str_replace_all("\\s+", " ") %>% 
-  str_replace_all("(^\\s+)|(\\s+$)", "") %>% 
-  word_tokenizer()
-it <- itoken(tokens)
-vectorizer <- vocab_vectorizer(vocab)
-unseen_dtm <- create_dtm(it, vectorizer)
-
-rwmd <- RelaxedWordMoversDistance$new(word_vectors)
-rwmd$verbose <- FALSE
-rwmd_distance <- dist2(unseen_dtm, dtm, 
-                       method = rwmd, 
-                       norm = "none")
-tidy_test$rwmd_distance <- rowMeans(rwmd_distance)
-rm(rwmd_distance)
-tidy_test %>% arrange(desc(rwmd_distance)) %>%
+similarity <- 
+  sim2(x = as.matrix(unseen_vectors), y = as.matrix(sentence_vectors), 
+       method = "cosine", norm = "l2")
+tidy_test$cosine_sim <- rowSums(similarity)
+tidy_test %>% arrange(cosine_sim) %>%
   select(Sentence) %>%
   head(10)
 ```
@@ -237,16 +215,14 @@ tidy_test %>% arrange(desc(rwmd_distance)) %>%
     ##                                                                          <chr>
     ## 1                                                     Autoimmune encephalitis.
     ## 2                                                                        108].
-    ## 3                                                                           i.
-    ## 4                                                                    B, III)."
-    ## 5  Autoimmune Disorders (VGKC-complex proteins, LGI1, CASPR2, contactin-2) PCT
-    ## 6                                                                           6.
-    ## 7                                                                           4.
-    ## 8                                                                           2.
-    ## 9                                                                           3.
-    ## 10                                                                          5.
-
-This isn't working so well either! Let's plot some distributions and see if we're getting anything useful from these metrics at all...
+    ## 3  For instance, when discussing dosing and augmentation of clozapine, use of 
+    ## 4  Autoimmune Disorders (VGKC-complex proteins, LGI1, CASPR2, contactin-2) PCT
+    ## 5  Furthermore products must meet strict government legalisation and Christine
+    ## 6  For example, Taylor 2009a is used throughout when considering clozapine aug
+    ## 7  Torture Team research successfully challenged the narrative of the US admin
+    ## 8  The two standard treatments for myasthenia gravis are anticholinesterase dr
+    ## 9  Examples of industrial members are Pfizer, Johnson Matthey and Procter &amp
+    ## 10 The review cites a Vincent group paper (Irani et al., 2010b) as evidence fo
 
 ``` r
 tidy_test$quality <- "Good"
@@ -274,7 +250,7 @@ ggplot(tidy_test) +
 
 ``` r
 ggplot(tidy_test) + 
-  geom_density(aes(x=rwmd_distance, fill=quality), alpha=0.7)
+  geom_density(aes(x=cosine_sim, fill=quality), alpha=0.7)
 ```
 
 ![](Implementation_files/figure-markdown_github/unnamed-chunk-1-3.png)
@@ -293,8 +269,30 @@ replacement_candidates <- tidy_test$Sentence[tidy_test$quality == "Bad"]
 We will use the Relaxed Word Mover's Distance exclusively for this part of the project given how well it worked in the experimentation phase.
 
 ``` r
+tokens <- 
+  tidy_ref$Sentence %>% 
+  str_to_lower() %>% 
+  str_replace_all("[^[:alnum:]]", " ") %>% 
+  str_replace_all("\\s+", " ") %>% 
+  str_replace_all("(^\\s+)|(\\s+$)", "") %>% 
+  word_tokenizer()
+it <- itoken(tokens)
+vectorizer <- vocab_vectorizer(vocab)
+dtm <- create_dtm(it, vectorizer)
+
+tokens <- 
+  tidy_test$Sentence %>% 
+  str_to_lower() %>% 
+  str_replace_all("[^[:alnum:]]", " ") %>% 
+  str_replace_all("\\s+", " ") %>% 
+  str_replace_all("(^\\s+)|(\\s+$)", "") %>% 
+  word_tokenizer()
+it <- itoken(tokens)
+vectorizer <- vocab_vectorizer(vocab)
+unseen_dtm <- create_dtm(it, vectorizer)
+
 for (i in seq_along(replacement_candidates)) {
-  message("Sentence to be replaced is:")
+  message("Sentence being analysed:")
   cat(replacement_candidates[i])
   
   tokens <- 
@@ -317,107 +315,107 @@ for (i in seq_along(replacement_candidates)) {
     arrange(rwmd_distance) %>% 
     head(3)
   
-  message("Try and make your sentence more like one of these:")
+  message("Similar sentences from the corpus:")
   print(suggestions$Sentence)
 }
 ```
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## We had a really big team and everyone did something different.
+    ## We tried to do something different to what everyone else was doing.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "We will be adding a knowledge quiz and Did You Know?"                                                  
-    ## [2] "They all felt it was very relevant and really was something they could connect with."                  
-    ## [3] "For some of those patients who we had not planned to operate, we have then taken a different approach."
+    ## [1] "Surely that is something that we all want to support.\""    
+    ## [2] "I can't think of anything else you could use to do it' [c]."
+    ## [3] "She felt she was doing something to help herself...\""
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## My analysis was awesome and had a huge impact on the world.
+    ## This project awesome and people in Australia and America said it was awesome.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "The wider impact of this research has been acknowledged within the museum world both in the UK and abroad: `the project had a transformatory effect on the V&amp;A."   
-    ## [2] "Impact on Policy The research associated with the development and evaluation of ASSIST has had a substantial impact on policy."                                        
-    ## [3] "In addition to the impact on public policy and its resultant impact on health and wellbeing, this work has had a significant impact on both society and practitioners."
+    ## [1] "It has also been broadcast on BBC2 and in Australia, South Africa, Canada and the United States."
+    ## [2] "It was also widely reviewed in Canada, Australia and the United States."                         
+    ## [3] "This was granted in USA in 2012 and is currently under examination in Europe."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## The University of Technology Sydney is the best university in the world.
+    ## The university got lots of money from the government and from IBM and Microsoft.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "This technology is the first and the only one available in the world."
-    ## [2] "The MIT museum is one of the largest Holography Museums in the world."
-    ## [3] "This is the first service of its kind anywhere in the world."
+    ## [1] "Many of the visitors were schoolchildren drawn in by the education projects, along with students from the University of Brighton and the University of Sussex."                                                                                                                                                                                                                             
+    ## [2] "The cast and crew of both, as well as the website team for the second, were drawn from the staff and students of the Department of Theatre, Film and Television."                                                                                                                                                                                                                           
+    ## [3] "The testimonials also revealed that the work of Dr Stibbe has been drawn from and incorporated into the curriculum at the University of York, Nottingham University, Greenwich University, South Downs College, London South Bank University, Ball State University, the University of Graz, the University of Modena, the University of New Mexico, and Luxemburg University among others."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## Every year lots of people are sick with a sleep disease.
+    ## Every year many people get sick kidneys and it makes them die.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "Every year around 17,000 people in the USA and 2,400 in the UK are diagnosed with the disease."                         
-    ## [2] "800 people develop CML each year in the UK and there are currently over 6,000 patients with the disease."               
-    ## [3] "An estimated 62,000 people develop the disease each year, of which the majority are in the early stages of the disease."
+    ## [1] "I know that some of this year's students also used them in school on their practices and found them appropriate and very useful' [C10]."                         
+    ## [2] "The ultimate beneficiaries of the research are 57,000 children and young people (and increasingly many adults) in Hull, and professionals working with them."    
+    ## [3] "The nature of the impact It is demonstrable that many people found this this material rewarding, and that many of them were moved to pursue the subject further."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## Many of our patients said that they felt better.
+    ## Everyone was sick at the start and now they are not sick at the end.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "Research into that is helping treatment of it and our understanding of how it works.\""
-    ## [2] "This means that more patients are free of their disease."                              
-    ## [3] "And in aspects of our practice they had an influence.\""
+    ## [1] "The DVD Only Connect was published at the very end of the assessment period, and sales figures are not yet available."       
+    ## [2] "At the project's end participants were asked to report how easy they found the exercise and how often they had completed it."
+    ## [3] "I was at the front, looking to do damage and not caring."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## We got our project in the local newspaper and on television.
+    ## We got our project in the local newspaper and on television and everyone watched.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "The conference on the Frisian tablet also generated local and national newspaper and television reports."                                                               
-    ## [2] "It has also been disseminated in local, national and international broadcasts and through the publication of articles in local and national newspapers."                
-    ## [3] "The project, and the successful launch of the boat in April 2013, were reported by the BBC and ITV in extended reports on national and local television and radio (e.g."
+    ## [1] "The conference on the Frisian tablet also generated local and national newspaper and television reports."                                                                                 
+    ## [2] "The project, and the successful launch of the boat in April 2013, were reported by the BBC and ITV in extended reports on national and local television and radio (e.g."                  
+    ## [3] "The Centre prides itself on its engagement in mainstream and peer reviewed journals and through presentations, conferences and on television and radio programmes and newspaper articles."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## A lot of people used to die and now less people die.
+    ## Lots of people were dying at the start and now less people are dying because of our project.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "The Care People: The Care People is a social enterprise established to provide care to children and older people."
-    ## [2] "The impacts affect the life chances of many young (and less young) people."                                       
-    ## [3] "This has changed and this change of perceptions is down to the work of people such as Ailsa\"."
+    ## [1] "Patients are less likely to be fluid overloaded now than they were at the beginning of the 21st century."                                                                                                  
+    ## [2] "The government people are working more cautiously because of this.'"                                                                                                                                       
+    ## [3] "Professional guidelines and training have been informed by the research and health outcomes have improved because of the availability of the new systems and the new ways that people are trained on them."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
     ## We came up with a new way of doing things that was better than the old way.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "In doing so, it has informed individuals by equipping them with a better understanding of the nature of the Templars."                           
+    ## [1] "As a result the new galleries adopted a chronological approach that opens `up the history of making and using objects in a way that reflects ..."
     ## [2] "For a fund that was less than one year old at the time, this demonstrates the quality of its proposition [7]."                                   
-    ## [3] "As a result the new galleries adopted a chronological approach that opens `up the history of making and using objects in a way that reflects ..."
+    ## [3] "In doing so, it has informed individuals by equipping them with a better understanding of the nature of the Templars."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## We worked with people from the biology, psychology and computer science departments.
+    ## We made friends and worked with people from the psychology department and the computer science department.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "Specifically, the collaboration examined the impact of our brain-computer research on public perceptions and engagement with science and society."                                     
-    ## [2] "We have worked with the Science Media Centre in educating journalists about our work."                                                                                                 
-    ## [3] "Wildlife groups and other local agencies will be able to continue to apply and extend the expertise they have developed from engagement with the project and its underpinning science."
+    ## [1] "Specifically, the collaboration examined the impact of our brain-computer research on public perceptions and engagement with science and society."
+    ## [2] "Cooper worked with the team from the Department of Informatics at the University of Sussex who created the virtual graphics."                     
+    ## [3] "The Bradford project also received funding from the Innovation, Excellence and Strategic Development Fund (IESD) from the Department of Health."
 
-    ## Sentence to be replaced is:
+    ## Sentence being analysed:
 
-    ## Other universities really liked what we did and now they want to do it too.
+    ## We worked with IBM and Microsoft and Apple and Google and lots of other companies.
 
-    ## Try and make your sentence more like one of these:
+    ## Similar sentences from the corpus:
 
-    ## [1] "It is really what the Japanese are like and not just what Westerners think they are like.\"["
-    ## [2] "It is really what the Japanese are like and not just what Westerners think they are like'."  
-    ## [3] "We helped answer questions such as: if communities are to do more, how do they go about it?"
+    ## [1] "We have worked with most of the major industry players, and many minor ones."          
+    ## [2] "The other companies listed are distribution and marketing companies with global reach."
+    ## [3] "Microsoft has engaged heavily with the University of Southampton and Dezineforce."

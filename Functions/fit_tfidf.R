@@ -15,7 +15,7 @@ fit_tfidf <- function(sentence, vocab) {
   it <- itoken(tokens)
   vectorizer <- vocab_vectorizer(vocab)
   dtm <- create_dtm(it, vectorizer)
-  tfidf <- TfIdf$new()
+  tfidf <- TfIdf$new(sublinear_tf = TRUE)
   tfidf$verbose <- FALSE
   tfidf$fit(dtm)
   return(tfidf)

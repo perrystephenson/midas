@@ -19,5 +19,5 @@ get_sentence_vectors <- function(sentences, vocab, transform, wv) {
   dtm <- create_dtm(iterator, vectorizer)
 
   dtm_tfidf <- transform(dtm, transform)
-  sentence_vectors <- dtm_tfidf %*% wv
+  sentence_vectors <- (dtm_tfidf %*% wv) 
 }
