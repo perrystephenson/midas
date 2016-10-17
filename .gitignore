@@ -34,6 +34,7 @@ vignettes/*.pdf
 /Experimentation/GloVeDistributions_cache/*
 /Experimentation/Replacement_cache/*
 /Implementation_cache/*
+/Experimentation/Tuning_cache/*
 
 .DS_Store
 .Rproj.user
