@@ -4,6 +4,9 @@
 
 # Session Data files
 .RData
+*.rds
+*.csv
+/webapp/rsconnect/*
 
 # Example code in package build process
 *-Ex.R
