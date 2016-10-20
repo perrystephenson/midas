@@ -56,3 +56,19 @@ global_distances <-
 
 thresholds <- quantile(global_distances, probs = c(0.9, 0.95))
 saveRDS(thresholds, "~/impactface/webapp/data/thresholds.rds")
+
+# Pre-calculate the DTM for the training data
+tokens <- 
+  tidy_ref$Sentence %>% 
+  str_to_lower() %>% 
+  str_replace_all("[^[:alnum:]]", " ") %>% 
+  str_replace_all("\\s+", " ") %>% 
+  str_replace_all("(^\\s+)|(\\s+$)", "") %>% 
+  word_tokenizer()
+it <- itoken(tokens)
+vectorizer <- vocab_vectorizer(vocab)
+dtm <- create_dtm(it, vectorizer)
+saveRDS(dtm, "~/impactface/webapp/data/dtm.rds")
+
+saveRDS(tidy_ref, "~/impactface/webapp/data/tidy_ref.rds")
+
