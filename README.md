@@ -42,7 +42,7 @@ The full project plan can be viewed [here](./ProjectPlan.md).
 
 ## Documentation
 
-[Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distil the concept of "good practice" for a rapidly developing field into a single list. Posted to [CIC Around blog](https://15-9203.ca.uts.edu.au/data-science-hygiene/) Friday 16th September (requires UTS login).
+[Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distil the concept of "good practice" for a rapidly developing field into a single list. Posted to [CIC Around blog](https://15-9203.ca.uts.edu.au/data-science-hygiene/) Friday 16th September (requires UTS login). I also reviewed the Data Science Hygiene proposal at the conclusion of the project: [Reviewing Data Science Hygiene](./Documentation/ReviewingDSH.md)
 
 [Developing Data Science Hygiene](./Documentation/DevelopingDSH.md) - the process I went through when developing the above document.
 
