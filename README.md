@@ -22,7 +22,7 @@ This iLab project will establish capability for the linguistic analysis of large
 - [x] Build an interactive tool for demonstration 
 - [ ] Prepare and deliver presentation for client and stakeholders
 
-The project plan can be viewed [here](./ProjectPlan.md).
+The full project plan can be viewed [here](./ProjectPlan.md).
 
 ## Code
 
