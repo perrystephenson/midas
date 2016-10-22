@@ -8,10 +8,19 @@ This repo contains both code and documentation for my [UTS MDSI iLab 1](http://h
 ### Original Specification
 In the UK academics submit 'impact case studies' as part of the Research Excellence Framework (REF) assessment of research quality across universities. These case studies were made available openly. Some analysis has been conducted on these, but further opportunities should be available. It may be possible to work with the Research and Innovation Office at UTS to explore the datasets we hold, including text data (from impact statements, funding applications and reports, publications, etc.) and other data such as collaboration networks. Outcomes might help researchers understand their reach, or flag ways that researchers could increase their impact, or foster new successful collaborations. 
 
+Additionally, the Connected Intelligence Centre (CIC) has an existing body of work aiming to use Natural Language Processing tools to parse written works and make suggestions about how to improve those works. One potential outcome for this project could be a similar system to assist researchers writing research grants, impact case studies, etc.
+
 The course outline for this subject can be accessed [here](https://ca.uts.edu.au/wp-content/uploads/2016/02/2016_Spring_36102_update.pdf).
 
-### Additional Notes
-The Connected Intelligence Centre (CIC) has an existing body of work aiming to use Natural Language Processing tools to parse written works and make suggestions about how to improve those works. One potential outcome for this project could be a similar system to assist researchers writing research grants, impact case studies, etc.
+### Project Scope
+
+This iLab project will establish capability for the linguistic analysis of large text datasets. The key tasks which make up this phase of the project are:
+
+- [x] Identify and implement project structure and data science best practice to ensure project can be efficiently paused and handed over between iLab semesters
+- [x] Research and document the scope of modern text mining practices, and identify suitable algorithms and approaches to meet client objectives
+- [x] Implement and document proof-of-concept analysis to demonstrate the viability of specific approaches
+- [x] Build an interactive tool for demonstration 
+- [ ] Prepare and deliver presentation for client and stakeholders
 
 The project plan can be viewed [here](./ProjectPlan.md).
 
@@ -25,6 +34,12 @@ The project plan can be viewed [here](./ProjectPlan.md).
 
 [Proof of Concept - Replacement Sentences](./Experimentation/Replacement.md) - Explored the use of the Word Mover's Distance as a way of identifying potential replacement sentences.
 
+[Tuning GloVe](./Experimentation/Tuning.md) - Trained a series of GloVe models using different dimensions and skip-window lengths and evaluated the resulting model using a standard test set.
+
+[Implementation](./Implementation.md) - A first pass at connecting all of the elements together.
+
+[Web App](./webapp/app.R) - A live demonstration system built using the `shiny` and `shinydashboard` packages. Several computationally expensive steps are completed using the [PrepareWebApp.R](./PrepareWebApp.R) script. A copy of this live demonstration is hosted on [shinyapps.io](http://midas.perrys.cloud/)
+
 ## Documentation
 
 [Data Science Hygiene](./Documentation/DataScienceHygiene.md) - an attempt to distil the concept of "good practice" for a rapidly developing field into a single list. Posted to [CIC Around blog](https://15-9203.ca.uts.edu.au/data-science-hygiene/) Friday 16th September (requires UTS login).
@@ -35,21 +50,21 @@ The project plan can be viewed [here](./ProjectPlan.md).
 
 [Text Mining in R](./Documentation/TextMiningInR.md) - a review of the set of text mining techniques which are currently available in R.
 
-## R Packages of Interest
+## Presentation
+
+[MIDAS - turning bad sentences into GOLD](https://docs.google.com/presentation/d/145d4z3AJHKXS0dUcVHATFCTsw6XanWpE5hKwrZmhH0g/edit?usp=sharing) - Presentation for iLab assessment on 26 October 2016.
+
+## Additional Information
+
+### Key R packages used in this project
+
+Aside from several packages from Hadley Wickham's tidyverse, I have used the following key packages:
 
 [text2vec](https://cran.r-project.org/web/packages/text2vec/)
 
-[Structural Topic Modelling](https://github.com/bstewart/stm)
-
-[tokenizers](https://cran.r-project.org/web/packages/tokenizers/index.html)
-
-[lda](https://cran.r-project.org/web/packages/lda/lda.pdf)
-
 [tidytext](https://github.com/juliasilge/tidytext)
 
-[hunspell](https://github.com/ropensci/hunspell)
-
-## Reference and Inspiration
+### Reference and Inspiration
 [API for accessing the Impact Case Studies dataset](http://impact.ref.ac.uk/CaseStudies/APIhelp.aspx)
 
 [Prior analysis of this dataset (Kings College)](http://www.kcl.ac.uk/sspp/policy-institute/publications/Analysis-of-REF-impact.pdf)
