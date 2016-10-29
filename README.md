@@ -70,7 +70,13 @@ My current vision for the end-state for the MIDAS project is a probabilistic out
 #### Presentation of semantically similar sentences
 ---
 
-The ideal algorithm for this component would show the user 3 (approximately) "good" sentences from the corpus, where those sentences have similar meaning to the one written by the user. These sentences are presented as guidance to the author rather than substitutions; the author is left to decide what it is about those sentences which 
+The ideal algorithm for this component would show the user 3 (approximately) "good" sentences from the corpus, where those sentences have similar meaning to the one written by the user. These sentences are presented as guidance to the author rather than substitutions; the author is left to decide what it is about those sentences that they need to emulate to make their sentence fit more closely with the corpus. 
+
+This is achieved using the [Word Mover's Distance](http://jmlr.org/proceedings/papers/v37/kusnerb15.pdf) which is a new and (apparently) very successful method for determine semantic distance between text passages. Given that this appears to be the best off-the-shelf technique currently available, and given that it seems to be working reasonably successfully, I am quite happy with how well it matches my vision for this component.
+
+##### End-state
+
+I am a lot happier with this than I am with the outlier detection, and I think it's pretty close to the best it can be with currently published approaches. Perhaps the WMD measurement can be combined with other measurements like sentence length, topic modelling, and maybe even good old-fashioned data cleaning to make this work better. The path forward is not clear, and it will require a fair bit of experimentation.
 
 </p></details>
 
