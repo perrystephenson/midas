@@ -37,7 +37,9 @@ I attempted to develop such a tool by breaking down the problem into two high-le
 
 Each of these tasks is considered individually below; future students working on this project will need to understand this section completely before commencing work on improvements.
 
-#### 1. Identification of bad sentences
+<details><summary>1. Identification of bad sentences *(click to expand)*</summary><p>
+#### Identification of bad sentences
+---
 
 In an ideal world, the "bad" sentences would be the complete set of all sentences which are not subjectively rated as "good" by a majority of readers familiar with the writing style of the corpus. Clearly this is not a realistic outcome for the project, so I focused on developing a single metric for sentences which could be used to detect "outliers". I have included some thoughts below (in the "End-state" section) about how multiple metrics could be combined to improve the overall success of the system. 
 
@@ -62,9 +64,15 @@ The use of semantic intensity may not be immediately useful in isolation, and he
 
 My current vision for the end-state for the MIDAS project is a probabilistic outlier detection algorithm which considers multiple sentence metrics (GloVe vector length, sentence length, punctuation counts, sentiment, etc) in the context of their distributions in the training corpus, and selects outliers by considering sentences with the a joint probability lower than a specified threshold. This work can be achieved incrementally, which makes it ideal for iLab group work. 
 
-#### 2. Presentation of semantically similar sentences
+</p></details>
+
+<details><summary>2. Presentation of semantically similar sentences *(click to expand)*</summary><p>
+#### Presentation of semantically similar sentences
+---
 
 The ideal algorithm for this component would show the user 3 (approximately) "good" sentences from the corpus, where those sentences have similar meaning to the one written by the user. These sentences are presented as guidance to the author rather than substitutions; the author is left to decide what it is about those sentences which 
+
+</p></details>
 
 ## Code
 
