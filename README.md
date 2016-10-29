@@ -2,7 +2,7 @@
 _Minimising Inferred Distance to Average Sentences_
 
 ### About this repository
-This repo contains both code and documentation for my [UTS MDSI iLab 1](http://handbook.uts.edu.au/subjects/36102.html) project. Every component of this project other than the powerpoint presentation is contained within this repository to make it as easy as possible for students undertaking iLab projects in future semesters to fork the repository and continue working on the project. Visitors to this repo who are not MDSI students are welcome to take a look around and fork the repo as well!
+This repo contains both code and documentation for my [UTS MDSI iLab 1](http://handbook.uts.edu.au/subjects/36102.html) project. Every component of this project other than the presentation slide deck is contained within this repository to make it as easy as possible for students undertaking iLab projects in future semesters to fork the repository and continue working on the project. Visitors to this repo who are not MDSI students are welcome to take a look around and fork the repo as well!
 
 ## The Project
 ### Original Specification
